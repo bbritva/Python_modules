@@ -1,13 +1,18 @@
 import sys
 
 def text_analyzer(line = ""):
+    "This function counts the number of upper characters, lower characters, punctuation and spaces in a given text."
+
     uppers = 0
     lowers = 0
     spaces = 0
     puncts = 0
 
+    if not isinstance(line, str):
+        print("AssertionError: argument is not a string")
+        return
     if not line:
-        print("prompt")
+        line = input("What is the text to analyze? ")
     for c in line:
         if c.isupper():
             uppers += 1
