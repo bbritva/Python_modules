@@ -23,11 +23,18 @@ def text_analyzer(line = ""):
         elif not c.isdigit():
             puncts += 1
     print ("The text contains {} character(s):".format(str(len(line))))
-    print ("- ", str(uppers), " upper letter(s)")
-    print ("- ", str(lowers), " lower letter(s)")
-    print ("- ", str(puncts), " punctuation mark(s)")
-    print ("- ", str(spaces), " space(s)")
+    print ("- {} upper letter(s)".format(str(uppers)))
+    print ("- {} lower letter(s)".format(str(lowers)))
+    print ("- {} punctuation mark(s)".format(str(puncts)))
+    print ("- {} space(s)".format(str(spaces)))
 
 
+if __name__ == "__main__":
+    if (len(sys.argv) == 2):
+        text_analyzer(sys.argv[1])
+    elif (len(sys.argv) < 2):
+        text_analyzer()
+    else:
+        print ("AssertionError: more than one argument are provided")
 
 
