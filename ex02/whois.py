@@ -1,7 +1,7 @@
 import sys
 
 def whois(str):
-    try:
+    if (str.isdigit()):
         num = int(str)
         if (num == 0):
             print("I'm Zero.")
@@ -9,7 +9,7 @@ def whois(str):
             print("I'm Even.")
         else:
             print("I'm Odd.")
-    except ValueError:
+    else:
         print ("AssertionError: argument is not an integer")
 
 
