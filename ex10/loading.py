@@ -28,5 +28,3 @@ if __name__ == "__main__":
         time.sleep(0.005)
     print()
     print(ret)
-
-    "ETA: 8.67s [ 23%][=====> > ] 233/1000 | elapsed time 2.33s"
