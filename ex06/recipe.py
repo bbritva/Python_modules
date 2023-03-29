@@ -2,9 +2,11 @@ cookbook = {'sandwich': (['ham', 'bread', 'cheese', 'tomatoes'], 'lunch', '10'),
             'cake': (['flour', 'sugar', 'eggs'], 'dessert', '60'),
             'salad': (['avocado', 'arugula', 'tomatoes', 'spinach'], 'lunch', '15')}
 
+
 def print_names():
-    line  = ', '.join('{}'.format(key) for key in cookbook.keys())
+    line = ', '.join('{}'.format(key) for key in cookbook.keys())
     print(line)
+
 
 def print_recipe(dish_name):
     dish = cookbook.get(dish_name)
@@ -16,12 +18,14 @@ def print_recipe(dish_name):
     else:
         print('Invalid recipe name.')
 
+
 def delete_recipe(dish_name):
     if dish_name in cookbook.keys():
         del cookbook[dish_name]
         print('Recipe of {} deleted.'.format(dish_name))
     else:
         print('Invalid recipe name.')
+
 
 def add_recipe():
     name = input('Enter a name:\n')
@@ -48,7 +52,7 @@ if __name__ == "__main__":
     3: Print a recipe
     4: Print the cookbook
     5: Quit""")
-    option = 0;
+    option = 0
     while True:
         try:
             option = int(input('Please select an option:\n>> '))
