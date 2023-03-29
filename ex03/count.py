@@ -1,3 +1,4 @@
+import string
 import sys
 
 def text_analyzer(line = ""):
@@ -20,7 +21,7 @@ def text_analyzer(line = ""):
             lowers += 1
         elif c.isspace():
             spaces += 1
-        elif not c.isdigit():
+        elif c in string.punctuation:
             puncts += 1
     print ("The text contains {} character(s):".format(str(len(line))))
     print ("- {} upper letter(s)".format(str(uppers)))
