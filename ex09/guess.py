@@ -6,15 +6,14 @@ You have to enter a number between 1 and 99 to find out the secret number.
 Type 'exit' to end the game.
 Good luck!""")
     num = random.randint(1, 99)
-    num = 42
     attempts = 0
     while True:
         attempts += 1
+        line = input("What's your guess between 1 and 99\n")
+        if line == 'exit':
+            print("Goodbye!")
+            break
         try:
-            line = input("What's your guess between 1 and 99\n")
-            if line == 'exit':
-                print("Goodbye!")
-                break
             inp_num = int(line)
             if inp_num > num:
                 print("Too high!")
