@@ -1,6 +1,8 @@
-cookbook = {'sandwich': (['ham', 'bread', 'cheese', 'tomatoes'], 'lunch', '10'),
+cookbook = {'sandwich': (['ham', 'bread', 'cheese', 'tomatoes'],
+                         'lunch', '10'),
             'cake': (['flour', 'sugar', 'eggs'], 'dessert', '60'),
-            'salad': (['avocado', 'arugula', 'tomatoes', 'spinach'], 'lunch', '15')}
+            'salad': (['avocado', 'arugula', 'tomatoes', 'spinach'],
+                      'lunch', '15')}
 
 
 def print_names():

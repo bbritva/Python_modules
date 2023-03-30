@@ -1,5 +1,6 @@
 import sys
 
+
 def operations(A, B):
     "This function blah blah"
     try:
@@ -20,12 +21,11 @@ def operations(A, B):
             print("Quotient:    ERROR (division by zero)")
             print("Remainder:   ERROR (modulo by zero)")
     except ValueError:
-        print ("AssertionError: only integers")
+        print("AssertionError: only integers")
+
 
 if __name__ == "__main__":
     if (len(sys.argv) != 3):
-        print ("AssertionError: too many arguments")
+        print("AssertionError: too many arguments")
     else:
         operations(sys.argv[1], sys.argv[2])
-
-

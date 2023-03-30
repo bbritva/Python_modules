@@ -21,7 +21,8 @@ Good luck!""")
                 print("Too low!")
             else:
                 if (num == 42):
-                    print("The answer to the ultimate question of life, the universe and everything is 42.")
+                    print(
+                        """The answer to the ultimate question of life, the universe and everything is 42.""")
                 if (attempts == 1):
                     print("Congratulations! You got it on your first try!")
                 else:
@@ -30,5 +31,3 @@ Good luck!""")
                 break
         except ValueError:
             print("That's not a number.")
-
-        

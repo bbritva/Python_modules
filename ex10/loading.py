@@ -1,5 +1,6 @@
 import time
 
+
 def ft_progress(list):
     start = time.time()
     max_value = max(list)
@@ -15,10 +16,11 @@ def ft_progress(list):
         else:
             empty = 19 - filled
         line = "ETA: %5.2fs [%3d%%] " % (eta, percent)
-        line += "[" + '=' * filled +'>' * (filled != 20) + ' ' * empty + '] '
+        line += "[" + '=' * filled + '>' * (filled != 20) + ' ' * empty + '] '
         line += "%4d/%4d | elapsed time %5.2fs" % (i + 1, max_value + 1, now)
         print(line, end="\r")
         yield i
+
 
 if __name__ == "__main__":
     listy = range(3333)

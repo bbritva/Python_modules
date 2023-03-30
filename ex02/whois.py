@@ -1,5 +1,6 @@
 import sys
 
+
 def whois(str):
     if (str.isdigit()):
         num = int(str)
@@ -10,13 +11,10 @@ def whois(str):
         else:
             print("I'm Odd.")
     else:
-        print ("AssertionError: argument is not an integer")
+        print("AssertionError: argument is not an integer")
 
-
-    
 
 if (len(sys.argv) == 2):
     whois(sys.argv[1])
 elif (len(sys.argv) > 2):
-    print ("AssertionError: more than one argument are provided")
-
+    print("AssertionError: more than one argument are provided")

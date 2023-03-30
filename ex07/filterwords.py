@@ -8,7 +8,8 @@ if __name__ == "__main__":
     else:
         try:
             lenght = int(sys.argv[2])
-            words = filter(lambda word: len(word) > lenght, sys.argv[1].translate(
+            words = filter(lambda word: len(word) > lenght,
+                           sys.argv[1].translate(
                 str.maketrans('', '', string.punctuation)).split(' '))
             print(list(words))
         except ValueError:
