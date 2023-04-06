@@ -1,9 +1,11 @@
 def checkList(values):
     return len(values) > 0 and isinstance(values[0], list) and \
-    len(values[0]) > 0 and isinstance(values[0][0], float)
+        len(values[0]) > 0 and isinstance(values[0][0], float)
+
 
 def checkShape(shape):
-    return (shape[0] == 1 and shape[1] > 0) or (shape[0] > 0 and shape[1] == 1) 
+    return (shape[0] == 1 and shape[1] > 0) or (shape[0] > 0 and shape[1] == 1)
+
 
 class Vector:
     def __init__(self, values):
@@ -13,6 +15,8 @@ class Vector:
             else:
                 raise ValueError
         elif isinstance(values, int):
+            if values < 0:
+                raise ValueError
             self.values = []
             innerList = []
             for i in range(values):
@@ -30,6 +34,53 @@ class Vector:
         if not checkShape(self.shape):
             raise ValueError
 
+    def dot(self, num):
+        for line in self.values:
+            for i in range(len(line)):
+                line[i] *= num
+
+    # add & radd : only vectors of same shape.
+    def __add__(self, other):
+        if isinstance(other, Vector) and self.shape == other.shape:
+            for i in range(len(self.values)):
+                for j in range(len(self.values[i])):
+                    self.values[i][j] += other.values[i][j]
+        else:
+            raise TypeError("wrong types")
+
+    def __radd__(self, other):
+        self.__add__(other)
+
+    # sub & rsub : only vectors of same shape.
+    def __sub__(self, other):
+        if isinstance(other, Vector) and self.shape == other.shape:
+            for i in range(len(self.values)):
+                for j in range(len(self.values[i])):
+                    self.values[i][j] -= other.values[i][j]
+        else:
+            raise TypeError("wrong types")
+    
+    def __rsub__(self, other):
+        self.__sub__(other)
+
+    # truediv : only with scalars (to perform division of Vector by a scalar).
+    def __truediv__(self, num):
+        if not isinstance(num, (int, float)):
+            raise TypeError("wrong types")
+        if num == 0:
+            raise ZeroDivisionError
+        for line in self.values:
+            for i in range(len(line)):
+                line[i] /= num
+
+# __rtruediv__
+# rtruediv : raises an NotImplementedError with the message "Division of a scalar by a Vector is not defined here."
+# __mul__
+# __rmul__
+# mul & rmul: only scalars (to perform multiplication of Vector by a scalar).
+# __str__
+# __repr__
+# must be identical, i.e we expect that print(vector) and vector within python interpretor behave the same, see correspond
+
     def __str__(self):
         return self.values.__str__()
-
