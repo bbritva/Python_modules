@@ -1,5 +1,0 @@
-pip list
-python -m pip show numpy
-pip uninstall numpy
-pip install --force-reinstall numpy
-python -m pip freeze > requirements.txt
