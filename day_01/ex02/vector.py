@@ -39,6 +39,19 @@ class Vector:
             for i in range(len(line)):
                 line[i] *= num
 
+    def T(self):
+        newList = []
+        if self.shape[1] == 1:
+            for i in range(len(self.values[0])):
+                newList.append([self.values[0][i],])
+        else:
+            innerList = []
+            for i in range(len(self.values)):
+                innerList.append([self.values[i][0]])
+            newList.append(innerList)
+        print(newList)
+        return Vector(newList)
+
     # add & radd : only vectors of same shape.
     def __add__(self, other):
         if isinstance(other, Vector) and self.shape == other.shape:
@@ -59,7 +72,7 @@ class Vector:
                     self.values[i][j] -= other.values[i][j]
         else:
             raise TypeError("wrong types")
-    
+
     def __rsub__(self, other):
         self.__sub__(other)
 
@@ -73,14 +86,24 @@ class Vector:
             for i in range(len(line)):
                 line[i] /= num
 
-# __rtruediv__
-# rtruediv : raises an NotImplementedError with the message "Division of a scalar by a Vector is not defined here."
-# __mul__
-# __rmul__
-# mul & rmul: only scalars (to perform multiplication of Vector by a scalar).
-# __str__
-# __repr__
-# must be identical, i.e we expect that print(vector) and vector within python interpretor behave the same, see correspond
+    def __rtruediv__(self, num):
+        raise NotImplementedError(
+            "Division of a scalar by a Vector is not defined here.")
+
+    # mul & rmul: only scalars (to perform multiplication of Vector by a scalar).
+
+    def __mul__(self, num):
+        if not isinstance(num, (int, float)):
+            raise TypeError("wrong types")
+        for line in self.values:
+            for i in range(len(line)):
+                line[i] *= num
+
+    def __rmul__(self, num):
+        self.__mul__(num)
+
+    def __repr__(self):
+        return self.values.__str__()
 
     def __str__(self):
         return self.values.__str__()
