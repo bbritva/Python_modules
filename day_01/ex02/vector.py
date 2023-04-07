@@ -36,10 +36,11 @@ class Vector:
 
     def dot(self, other):
         if isinstance(other, Vector) and self.shape == other.shape:
+            result = 0
             for i in range(len(self.values)):
                 for j in range(len(self.values[i])):
-                    self.values[i][j] *= other.values[i][j]
-            return self
+                    result += self.values[i][j] * other.values[i][j]
+            return result
         else:
             raise TypeError("wrong types")
 
