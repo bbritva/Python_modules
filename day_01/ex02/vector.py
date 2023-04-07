@@ -58,26 +58,34 @@ class Vector:
     # add & radd : only vectors of same shape.
     def __add__(self, other):
         if isinstance(other, Vector) and self.shape == other.shape:
+            newList = []
             for i in range(len(self.values)):
+                innerList = []
                 for j in range(len(self.values[i])):
-                    self.values[i][j] += other.values[i][j]
+                    innerList.append(self.values[i][j] + other.values[i][j])
+                newList.append(innerList)
+            return Vector(newList)
         else:
             raise TypeError("wrong types")
 
     def __radd__(self, other):
-        self.__add__(other)
+        return self.__add__(other)
 
     # sub & rsub : only vectors of same shape.
     def __sub__(self, other):
         if isinstance(other, Vector) and self.shape == other.shape:
+            newList = []
             for i in range(len(self.values)):
+                innerList = []
                 for j in range(len(self.values[i])):
-                    self.values[i][j] -= other.values[i][j]
+                    innerList.append(self.values[i][j] - other.values[i][j])
+                newList.append(innerList)
+            return Vector(newList)
         else:
             raise TypeError("wrong types")
 
     def __rsub__(self, other):
-        self.__sub__(other)
+        return self.__sub__(other)
 
     # truediv : only with scalars (to perform division of Vector by a scalar).
     def __truediv__(self, num):
@@ -85,9 +93,13 @@ class Vector:
             raise TypeError("wrong types")
         if num == 0:
             raise ZeroDivisionError
+        newList = []
         for line in self.values:
+            innerList = []
             for i in range(len(line)):
-                line[i] /= num
+                innerList.append(line[i] / num)
+            newList.append(innerList)
+        return Vector(newList)
 
     def __rtruediv__(self, num):
         raise NotImplementedError(
@@ -98,12 +110,16 @@ class Vector:
     def __mul__(self, num):
         if not isinstance(num, (int, float)):
             raise TypeError("wrong types")
+        newList = []
         for line in self.values:
+            innerList = []
             for i in range(len(line)):
-                line[i] *= num
+                innerList.append(line[i] * num)
+            newList.append(innerList)
+        return Vector(newList)
 
     def __rmul__(self, num):
-        self.__mul__(num)
+        return self.__mul__(num)
 
     def __repr__(self):
         return self.values.__str__()

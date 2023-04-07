@@ -37,7 +37,6 @@ if __name__ == '__main__':
     print("input: " + "(-10, -5)          => vct =", vct)
 
     cprint("\nMethods tests:", "black", "on_white")
-
     vct1 = Vector([[1.], [2.], [3.]])
     print("vct1 = ", vct1)
     vct2 = Vector([[3.], [4.], [5.]])
@@ -46,3 +45,8 @@ if __name__ == '__main__':
     print("Transposed vct1 = ", vct1.T())
     print("Transposed twice vct1 = ", vct1.T().T())
     print("Transposed vct2 = ", vct2.T())
+
+    cprint("\nDunder tests:", "black", "on_white")
+    v1 = Vector([[0.0], [1.0], [2.0], [3.0]])
+    v2 = v1 * 5
+    print(v2)
