@@ -41,15 +41,14 @@ class Vector:
 
     def T(self):
         newList = []
-        if self.shape[1] == 1:
+        if self.shape[0] == 1:
             for i in range(len(self.values[0])):
                 newList.append([self.values[0][i],])
         else:
             innerList = []
-            for i in range(len(self.values)):
-                innerList.append([self.values[i][0]])
+            for line in self.values:
+                innerList.append(line[0])
             newList.append(innerList)
-        print(newList)
         return Vector(newList)
 
     # add & radd : only vectors of same shape.
