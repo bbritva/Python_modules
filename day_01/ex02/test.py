@@ -66,55 +66,29 @@ if __name__ == '__main__':
     except NotImplementedError:
         print("NotImplementedError: Division of a scalar by a Vector is not defined here.")
 
-    # Column vector of shape (n, 1)
-    print(Vector([[0.0], [1.0], [2.0], [3.0]]).shape)
-    # Expected output
-    # (4,1)
-    print(Vector([[0.0], [1.0], [2.0], [3.0]]).values)
-    # Expected output
-    # [[0.0], [1.0], [2.0], [3.0]]
-    # Row vector of shape (1, n)
-    print(Vector([[0.0, 1.0, 2.0, 3.0]]).shape)
-    # Expected output
-    # (1,4)
-    print(Vector([[0.0, 1.0, 2.0, 3.0]]).values)
-    # Expected output
-    # [[0.0, 1.0, 2.0, 3.0]]
-    # Example 1:
+    cprint("\nSubject tests:", "black", "on_white")
+    print("shape of [[0.0], [1.0], [2.0], [3.0]] =", Vector([[0.0], [1.0], [2.0], [3.0]]).shape)
+    print("values of [[0.0], [1.0], [2.0], [3.0]] =", Vector([[0.0], [1.0], [2.0], [3.0]]).values)
+    print("shape of [[0.0, 1.0, 2.0, 3.0]] =", Vector([[0.0, 1.0, 2.0, 3.0]]).shape)
+    print("values of [[0.0, 1.0, 2.0, 3.0]] =", Vector([[0.0, 1.0, 2.0, 3.0]]).values)
     v1 = Vector([[0.0], [1.0], [2.0], [3.0]])
-    print(v1.shape)
-    # Expected output:
-    (4,1)
-    print(v1.T())
-    # Expected output:
-    # Vector([[0.0, 1.0, 2.0, 3.0]])
-    print(v1.T().shape)
-    # Expected output:
-    # (1,4)
-    # Example 2:
+    print("v1 =", v1, "v1.shape =", v1.shape)
+    print("v1 transposed =", v1.T())
+    print("v1 transposed shape =", v1.T().shape)
     v2 = Vector([[0.0, 1.0, 2.0, 3.0]])
-    print(v2.shape)
-    # Expected output:
-    # (1,4)
-    print(v2.T())
-    # Expected output:
-    # Vector([[0.0], [1.0], [2.0], [3.0]])
-    print(v2.T().shape)
-    # Expected output:
-    # (4,1)
+    print("v2 =", v2, "v2.shape =", v2.shape)
+    print("v2 transposed =", v2.T())
+    print("v2 transposed shape =", v2.T().shape)
+
     print( "Example 1:")
     v1 = Vector([[0.0], [1.0], [2.0], [3.0]])
     v2 = Vector([[2.0], [1.5], [2.25], [4.0]])
-    print(v1.dot(v2))
-    # Expected output:
-    # 18.0
+    print("v1 =", v1)
+    print("v2 =", v2)
+    print("v1.dot(v2) =",v1.dot(v2))
     v3 = Vector([[1.0, 3.0]])
     v4 = Vector([[2.0, 4.0]])
-    print(v3.dot(v4))
-    # Expected output:
-    # 13.0
-    print(repr(v1))
-    # Expected output: to see what __repr__() should do
-    # [[0.0, 1.0, 2.0, 3.0]]
-    print(v1)
-    # Expected output: to see w
+    print("v3 =", v3)
+    print("v4 =", v4)
+    print("v3.dot(v4) =",v3.dot(v4))
+    print("repr(v1):",repr(v1))
