@@ -34,10 +34,14 @@ class Vector:
         if not checkShape(self.shape):
             raise ValueError
 
-    def dot(self, num):
-        for line in self.values:
-            for i in range(len(line)):
-                line[i] *= num
+    def dot(self, other):
+        if isinstance(other, Vector) and self.shape == other.shape:
+            for i in range(len(self.values)):
+                for j in range(len(self.values[i])):
+                    self.values[i][j] *= other.values[i][j]
+            return self
+        else:
+            raise TypeError("wrong types")
 
     def T(self):
         newList = []
