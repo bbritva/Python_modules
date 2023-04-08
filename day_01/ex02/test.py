@@ -92,3 +92,96 @@ if __name__ == '__main__':
     print("v4 =", v4)
     print("v3.dot(v4) =",v3.dot(v4))
     print("repr(v1):",repr(v1))
+
+    cprint("\nCode_blocks tests:", "black", "on_white")
+    cprint("### # 01.02.00", "green")
+    print(Vector([[1. , 2e-3, 3.14, 5.]]).values)
+    cprint("### # 01.02.01", "green")
+    print(Vector(4).values)
+    cprint("### # 01.02.02", "green")
+    try:
+        (Vector(-1))
+    except ValueError:
+        cprint("ValueError", "red")
+    cprint("### # 01.02.03", "green")
+    print(Vector((10, 12)).values)
+    cprint("### # 01.02.04", "green")
+    try:
+        print(Vector((3, 1)).values)
+    except ValueError:
+        cprint("ValueError", "red")
+    cprint("### # 01.02.05", "green")
+    try:
+        v = Vector((1, 1))
+        print(v.values)
+    except ValueError:
+        cprint("ValueError", "red")
+    cprint("### # 01.02.06", "green")
+    try:
+        Vector((4, 7.1))
+    except ValueError:
+        cprint("ValueError", "red")
+    cprint("### # 01.02.07", "green")
+    v = Vector(4)
+    print(v.values)
+    cprint("### # 01.02.08", "green")
+    print(v * 4)
+    cprint("### # 01.02.09", "green")
+    print(4.0 * v)
+    cprint("### # 01.02.10", "green")
+    try:
+        v * "hi"
+    except TypeError:
+        cprint("TypeError", "red")
+    cprint("### # 01.02.11", "green")
+    v = Vector(4)
+    v2 = Vector([[1.0], [1.0], [1.0], [1.0]])
+    print((v + v2).values)
+    try:
+        cprint("### # 01.02.12", "green")
+    except ValueError:
+        cprint("ValueError", "red")
+    try:
+        v + Vector([0.0, 0.0, 0.0, 0.0])
+    except ValueError:
+        cprint("ValueError", "red")
+    cprint("### # 01.02.13", "green")
+    try:
+        v + "hello"
+    except TypeError:
+        cprint("TypeError", "red")
+    cprint("### # 01.02.14", "green")
+    try:
+        v + None
+    except TypeError:
+        cprint("TypeError", "red")
+    cprint("### # 01.02.15", "green")
+    try:
+        print((v - v2).values != (v2 - v).values)
+    except ValueError:
+        cprint("ValueError", "red")
+    cprint("### # 01.02.16", "green")
+    print(Vector(4) / 2)
+    cprint("### # 01.02.17", "green")
+    print(Vector(4) / 3.14)
+    cprint("### # 01.02.18", "green")
+    try:
+        Vector(4) / 0
+    except ZeroDivisionError:
+        cprint("ZeroDivisionError", "red")
+    cprint("### # 01.02.19", "green")
+    try:
+        Vector(4) / None
+    except TypeError:
+        cprint("TypeError", "red")
+    cprint("### # 01.02.20", "green")
+    try:
+        None / Vector(4)
+    except NotImplementedError:
+        cprint("NotImplementedError", "red")
+    cprint("### # 01.02.21", "green")
+    try:
+        3 / Vector(3)
+    except NotImplementedError:
+        cprint("NotImplementedError", "red")
+

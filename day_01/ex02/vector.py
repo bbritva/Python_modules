@@ -18,18 +18,17 @@ class Vector:
             if values < 0:
                 raise ValueError
             self.values = []
-            innerList = []
             for i in range(values):
-                innerList.append(float(i))
-            self.values.append(innerList)
+               self.values.append([float(i),])
         elif isinstance(values, tuple):
-            if len(values) != 2 or values[0] > values[1]:
+            if len(values) != 2 or \
+                not isinstance(values[0], int) or \
+                not isinstance(values[1], int) or \
+                    values[0] >= values[1]:
                 raise ValueError
             self.values = []
-            innerList = []
             for i in range(values[0], values[1]):
-                innerList.append(float(i))
-            self.values.append(innerList)
+                self.values.append([float(i),])
         self.shape = (len(self.values), len(self.values[0]))
         if not checkShape(self.shape):
             raise ValueError
