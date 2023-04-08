@@ -1,4 +1,6 @@
 class GotCharacter():
+    """A class representing the Got Character.\nSomebody died again"""
+
     def __init__(self, first_name=None, is_alive=True):
         self.first_name = first_name
         self.is_alive = is_alive
@@ -39,23 +41,24 @@ if __name__ == '__main__':
 
     print("Let's create Oberyn")
     oberyn = Martell("Oberyn")
-    
+
     print("Here is object struct:\n", oberyn.__dict__)
     print("Here is Martell's class desc:\n", oberyn.__doc__)
     print("Here is Martell's house words: ", end="")
     oberyn.print_house_words()
     print(f"\nHere is Oberyn's live status: {oberyn.is_alive}")
     oberyn.die()
-    print(f"But after the fight with the mountain Oberyn's live status became: {oberyn.is_alive}\n")
-    
-    
+    print(
+        f"But after the fight with the mountain Oberyn's live status became: {oberyn.is_alive}\n")
+
     print("Let's create Olenna")
     olenna = Tyrell("Olenna")
-    
+
     print("Here is object struct:\n", olenna.__dict__)
     print("Here is Tyrell's class desc:\n", olenna.__doc__)
     print("Here is Tyrell's house words", end="")
     olenna.print_house_words()
     print(f"\nHere is Olenna's live status: {olenna.is_alive}")
     olenna.die()
-    print(f"But after the date with Jaime Olenna's live status became: {olenna.is_alive}")
+    print(
+        f"But after the date with Jaime Olenna's live status became: {olenna.is_alive}")
