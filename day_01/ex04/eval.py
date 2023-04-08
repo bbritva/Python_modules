@@ -32,13 +32,11 @@ class Evaluator:
 
 def test(coefs, words):
     """A function to test the Evaluator class"""
-    zip_result = Evaluator().zip_evaluate(coefs, words) # call from instance
-    enum_result = Evaluator.zip_evaluate(coefs, words) # call without instance
     print("Testing with")
     print("words =", words)
     print("coefs =", coefs)
-    print("zip_result :", zip_result)
-    print("enumerate_result() :", enum_result)
+    print("zip result :", Evaluator().zip_evaluate(coefs, words)) # call from instance
+    print("enumerate result :", Evaluator.zip_evaluate(coefs, words)) # call without instance
     print()
 
 
@@ -50,3 +48,5 @@ if __name__ == '__main__':
     test([1.0, 2.0, 1.0, 4.0, 0.5], ["Le", "Lorem", 44, "est", "simple"])
     test([1.0, 2.0, 1.0, 4.0, 0.5, 11.0], [
          "Le", "Lorem", "Ipsum", "est", "tres", "simple"])
+    test([1.0], ["simple"])
+    test([1.0, 2.0], ["tres", "simple"])
