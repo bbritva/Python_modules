@@ -34,7 +34,7 @@ class Book:
         for type in self.recipes_list.keys():
             for dish in self.recipes_list[type]:
                 if dish.name == name:
-                    print(dish)
+                    print(Book.recipe_to_str(dish))
                     return dish
         print("Dish is not found =(")
 
@@ -53,3 +53,13 @@ class Book:
             self.last_update = datetime.datetime.now()
         else:
             print("Argument is not a Recipe")
+
+    @staticmethod
+    def recipe_to_str(recipe):
+        """Return the string to print with the recipe info"""
+        txt = '\n'.join([f'Recipe for {recipe.name}:',
+                         '  - Ingredients list: {};'.format(', '.join(recipe.ingredients)),
+                         f'  - To be eaten for {recipe.recipe_type};',
+                         f'  - Takes {recipe.cooking_time} minutes of cooking;',
+                         f'  - Has difficulty level {recipe.cooking_lvl}.'])
+        return txt

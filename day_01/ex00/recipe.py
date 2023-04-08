@@ -38,16 +38,3 @@ class Recipe:
         if err:
             print(err)
             sys.exit(0)
-
-    def __str__(self):
-        """Return the string to print with the recipe info"""
-        txt = '\n'.join([f'Recipe for {self.name}:',
-                         '  - Ingredients list: {};'.format(', '.join(self.ingredients)),
-                         f'  - To be eaten for {self.recipe_type};',
-                         f'  - Takes {self.cooking_time} minutes of cooking;',
-                         f'  - Has difficulty level {self.cooking_lvl}.'])
-        return txt
-
-
-rec = Recipe("rr", 3, 3, ["hh", "gg"], "", "starter")
-print(rec)
