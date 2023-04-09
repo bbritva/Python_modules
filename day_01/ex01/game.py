@@ -49,14 +49,14 @@ if __name__ == '__main__':
     print(f"\nHere is Oberyn's live status: {oberyn.is_alive}")
     oberyn.die()
     print(
-        f"But after the fight with the mountain Oberyn's live status became: {oberyn.is_alive}\n")
+        f"But after the fight with the Mountain Oberyn's live status became: {oberyn.is_alive}\n")
 
     print("Let's create Olenna")
     olenna = Tyrell("Olenna")
 
     print("Here is object struct:\n", olenna.__dict__)
     print("Here is Tyrell's class desc:\n", olenna.__doc__)
-    print("Here is Tyrell's house words", end="")
+    print("Here is Tyrell's house words: ", end="")
     olenna.print_house_words()
     print(f"\nHere is Olenna's live status: {olenna.is_alive}")
     olenna.die()

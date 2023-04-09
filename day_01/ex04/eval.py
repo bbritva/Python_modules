@@ -1,3 +1,6 @@
+from termcolor import cprint
+
+
 class Evaluator:
     @staticmethod
     def zip_evaluate(coefs, words):
@@ -32,10 +35,11 @@ class Evaluator:
 
 def test(coefs, words):
     """A function to test the Evaluator class"""
-    print("Testing with")
+    cprint("Test case:", "green")
     print("words =", words)
     print("coefs =", coefs)
-    print("zip result :", Evaluator().zip_evaluate(coefs, words)) # call from instance
+    cprint("Results:", "green")
+    print("zip result :      ", Evaluator().zip_evaluate(coefs, words)) # call from instance
     print("enumerate result :", Evaluator.zip_evaluate(coefs, words)) # call without instance
     print()
 
