@@ -1,6 +1,8 @@
 import random
 import string
 
+from termcolor import cprint
+
 class Account():
     ID_COUNT = 1
 
@@ -19,6 +21,30 @@ class Account():
     def transfer(self, amount):
         self.value += amount
 
+    def fix(self):
+        arr = [a for a in self.__dict__.keys() if a.startswith('b')]
+        for key in arr:
+            self.__dict__.pop(key)
+        if len([a for a in self.__dict__.keys() if a.startswith('zip') or a.startswith('addr')]) == 0:
+            self.zip = "00000"
+        if not "id" in self.__dict__.keys():
+            self.id = Account.ID_COUNT
+            Account.ID_COUNT += 1
+        if not "value" in self.__dict__.keys():
+            self.value = 0
+        if not isinstance(self.id, int):
+            self.id = Account.ID_COUNT
+            Account.ID_COUNT += 1
+        if not isinstance(self.value, (int, float)):
+            self.value = 0
+        if len(self.__dict__.keys()) % 2 == 0:
+            newAttr = "b"
+            letters = string.ascii_lowercase
+            while newAttr.startswith("b") or newAttr in self.__dict__.keys():
+                newAttr = ''.join(random.choice(letters) for i in range(8))
+            self.__dict__[newAttr] = newAttr
+        return self
+
 
 class Bank():
     @staticmethod
@@ -30,9 +56,7 @@ class Bank():
             return False
         if len([a for a in dicted.keys() if a.startswith('b')]) > 0:
             return False
-        if len([a for a in dicted.keys() if a.startswith('addr')]) == 0:
-            return False
-        if len([a for a in dicted.keys() if a.startswith('zip')]) == 0:
+        if len([a for a in dicted.keys() if a.startswith('addr') or a.startswith('zip')]) == 0:
             return False
         if not "name" in dicted.keys() or\
                 not "id" in dicted.keys() or\
@@ -82,8 +106,8 @@ class Bank():
                 not isinstance(amount, (int, float)) or \
                 origAcc.value < amount:
             return False
-        origAcc.value -= amount
-        destAcc.value += amount
+        origAcc.transfer(-amount)
+        destAcc.transfer(amount)
         return True
 
     def fix_account(self, name):
@@ -91,37 +115,85 @@ class Bank():
         @name: str(name) of the account
         @return True if success, False if an error occured
         """
-        if not isinstance(name, str):
-            return False
         account = None
-        for acc in self.accounts:
-            if acc.name == name:
-                account = acc
-        if not account:
-            print("fix Failed")
-            return False
-        arr = [a for a in account.__dict__.keys() if a.startswith('b')]
-        for key in arr:
-            account.__dict__.pop(key)
-        if len([a for a in account.__dict__.keys() if a.startswith('addr')]) == 0:
-            account.addr = "42 rue Default"
-        if len([a for a in account.__dict__.keys() if a.startswith('zip')]) == 0:
-            account.zip = "00000"
-        if not "id" in account.__dict__.keys():
-            account.id = Account.ID_COUNT
-            Account.ID_COUNT += 1
-        if not "value" in account.__dict__.keys():
-            account.value = 0
-        if not isinstance(account.id, int):
-            account.id = Account.ID_COUNT
-            Account.ID_COUNT += 1
-        if not isinstance(account.value, (int, float)):
-            account.value = 0
-        if len(account.__dict__.keys()) % 2 == 0:
-            newAttr = "b"
-            letters = string.ascii_lowercase
-            while newAttr.startswith("b") or newAttr in account.__dict__.keys():
-                newAttr = ''.join(random.choice(letters) for i in range(8))
-            account.__dict__[newAttr] = newAttr
-        return True
-        
+        if isinstance(name, str):
+            for acc in self.accounts:
+                if acc.name == name:
+                    account = acc
+            if not account:
+                return False
+            account.fix()
+            return True
+        if isinstance(name, Account):
+            account = name
+            return account.fix()
+        print("fix Failed")
+        return False
+
+
+if __name__ == "__main__":
+    cprint("### # 01.05.01", "green")
+    
+    bank = Bank()
+    john = Account(
+        'William John',
+        zip='100-064',
+        brother="heyhey",
+        value=6460.0,
+        ref='58ba2b9954cd278eda8a84147ca73c87',
+        info=None,
+        other='This is the vice president of the corporation',
+        lol = "hihi"
+    )
+    print(bank.fix_account(john))
+    bank.fix_account('William John')
+
+    cprint("### # 01.05.02", "green")
+    john = Account(
+        'William John',
+        zip='100-064',
+        rother="heyhey",
+        value=6460.0,
+        ref='58ba2b9954cd278eda8a84147ca73c87',
+        info=None,
+        other='This is the vice president of the corporation',
+    )
+    print("isValid:", Bank.isAccValid(john))
+    cprint("### # 01.05.03", "green")
+    john = Account(
+        'William John',
+        zip='100-064',
+        rother="heyhey",
+        ref='58ba2b9954cd278eda8a84147ca73c87',
+        info=None,
+        other='This is the vice president of the corporation',
+        lol = "lolilol"
+    )
+    print("isValid:", Bank.isAccValid(john))
+
+    cprint("### # 01.05.04", "green")
+    bank.add(
+        Account(
+            'Jane',
+            zip='911-745',
+            value=1000.0,
+            ref='1044618427ff2782f0bbece0abd05f31'
+        )
+    )
+
+    jhon = Account(
+        'Jhon',
+        zip='911-745',
+        value=1000.0,
+        ref='1044618427ff2782f0bbece0abd05f31'
+    )
+
+    bank.add(jhon)
+
+    print("testing a valid transfer")
+    print(jhon.value)
+    print(bank.transfer("Jane", "Jhon", 500))
+    print(jhon.value)
+    cprint("### # 01.05.05", "green")
+    print(bank.transfer("Jane", "Jhon", 1000))
+    print(jhon.value)
