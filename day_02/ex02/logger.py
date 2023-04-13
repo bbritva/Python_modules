@@ -11,9 +11,9 @@ def log(func):
         user = os.getlogin()
         with open("machine.log", "a") as f:
             if exec_time > 0.001:
-                f.write(f"({user})Running: {func_name:15} [ exec-time = {exec_time:.3f} s ]\n")
+                f.write(f"({user})Running: {func_name:20} [ exec-time = {exec_time:.3f} s ]\n")
             else:
-                f.write(f"({user})Running: {func_name:15} [ exec-time = {exec_time * 1000:.3f} ms ]\n")
+                f.write(f"({user})Running: {func_name:20} [ exec-time = {exec_time * 1000:.3f} ms ]\n")
         return result
     return wrapper
 
