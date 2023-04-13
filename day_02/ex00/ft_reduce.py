@@ -1,6 +1,3 @@
-from functools import reduce
-
-
 def ft_reduce(function_to_apply, iterable):
     """Apply function of two arguments cumulatively.
     Args:

@@ -2,8 +2,12 @@ def what_are_the_vars(*args, **kwargs):
     """returns an instance of class ObjectC"""
     obj = ObjectC()
     for i, arg in enumerate(args):
+        if hasattr(obj, "var_{}".format(i)):
+            return None
         setattr(obj, "var_{}".format(i), arg)
     for k, v in kwargs.items():
+        if hasattr(obj, k):
+            return None
         setattr(obj, k, v)
     return obj
 
