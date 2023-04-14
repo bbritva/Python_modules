@@ -3,16 +3,22 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "my_minipack_package_grvelva"
-version = "0.0.1"
+name = "my_minipack"
+version = "1.0.0"
 authors = [
   { name="Boris Andreev", email="grvelva@student.42.fr" },
 ]
-description = "A small example package"
+description = "Howto create a package in python."
 readme = "README.md"
 requires-python = ">=3.7"
 classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Students",
+    "Topic :: Education",
+    "Topic :: HowTo",
+    "Topic :: Package",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
     "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: MIT License",
-    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3 :: Only"
 ]
