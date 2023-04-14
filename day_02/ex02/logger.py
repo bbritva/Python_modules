@@ -17,7 +17,6 @@ def log(func):
         return result
     return wrapper
 
-#... your definition of log decorator...
 class CoffeeMachine():
     water_level = 25
     @log

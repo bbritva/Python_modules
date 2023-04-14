@@ -1,34 +1,36 @@
 import time
 from random import randint
-from my_minipack import logger
+from my_minipack.logger import log
+from my_minipack.loading import ft_progress
 
-class CoffeeMachine(): # pylint: disable=missing-class-docstring
-
-    water_level = 100
-
-    @logger
-    def start_machine(self): # pylint: disable=missing-function-docstring
+class CoffeeMachine():
+    water_level = 25
+    @log
+    def start_machine(self):
         if self.water_level > 20:
             return True
         else:
             print("Please add water!")
-            return False
+        return False
+    
 
-    @logger
-    def boil_water(self): # pylint: disable=missing-function-docstring
+    @log
+    def boil_water(self):
         return "boiling..."
+    
 
-    @logger
-    def make_coffee(self): # pylint: disable=missing-function-docstring
+    @log
+    def make_coffee(self):
         if self.start_machine():
             for _ in range(20):
                 time.sleep(0.1)
-                self.water_level -= 1
+            self.water_level -= 1
             print(self.boil_water())
             print("Coffee is ready!")
 
-    @logger
-    def add_water(self, water_level): # pylint: disable=missing-function-docstring
+
+    @log
+    def add_water(self, water_level):
         time.sleep(randint(1, 5))
         self.water_level += water_level
         print("Blub blub blub...")
@@ -39,3 +41,11 @@ if __name__ == "__main__":
         machine.make_coffee()
     machine.make_coffee()
     machine.add_water(70)
+
+    listy = range(100)
+    ret = 0
+    for elem in ft_progress(listy):
+        ret += elem
+        time.sleep(0.01)
+    print()
+    print(ret)
