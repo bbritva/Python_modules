@@ -43,10 +43,8 @@ class ScrapBooker:
         This function should not raise any Exception.
         """
         try:
-            length = array.shape[0] if axis == 1 else array.shape[1]
-            rang = np.arange(n - 1, length, n)
-            print(rang)
-            return np.delete(array, rang, 1 if axis == 0 else 0)
+            axis = 1 if axis == 0 else 0 
+            return np.delete(array, np.arange(n - 1, array.shape[axis], n), axis)
                 
         except:
             return None
