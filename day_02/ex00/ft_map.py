@@ -26,3 +26,6 @@ if __name__ == "__main__":
     print(list(ft_map(lambda x: x + 1, [1, 2, 3])))
     print(list(ft_map(lambda x: x + 1, [1, 2, 3, 4])))
     print(list(ft_map(lambda x: x + 1, [1, 2, 3, 4, 5])))
+    print(list(ft_map(lambda x: x + 2, [])))
+    print(list(ft_map(lambda x: x + 2, [1])))
+    print(list(ft_map(lambda x: x ** 2, [1, 2, 3, 4, 5])))

@@ -22,8 +22,12 @@ class CsvReader():
         self.len = len(header)
         if self.header:
             self.header_value = header
+            lines = self.lines[1:]
+        else:
+            lines = self.lines
         self.data = []
-        for line in self.lines[1:]:
+        
+        for line in lines:
             curr_line = list(map(str.strip, line.split(self.sep)))
             if len(curr_line) != self.len:
                 return None

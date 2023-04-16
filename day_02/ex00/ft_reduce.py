@@ -31,5 +31,5 @@ if __name__ == "__main__":
     print(ft_reduce(lambda x, y: x + y, [1, 2, 3, 4, 5]))
     lst = ['H', 'e', 'l', 'l', 'o', ' ', 'w', 'o', 'r', 'l', 'd']
     print(ft_reduce(lambda u, v: u + v, lst))
-    # Output:
-    "Hello world"
+    print(ft_reduce((lambda x, y: x + y), [1]))
+    print(ft_reduce((lambda x, y: x * y), [1, 2, 3, 4]))
