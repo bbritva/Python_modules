@@ -1,3 +1,6 @@
+import numpy as np
+
+
 class ScrapBooker:
     def crop(self, array, dim, position=(0,0)):
         """
@@ -16,7 +19,10 @@ class ScrapBooker:
         ------
         This function should not raise any Exception.
         """
-        pass
+        try:
+            return array[position[0]:position[0] + dim[0], position[1]:position[1] + dim[1]]
+        except:
+            return None
 
 
     def thin(self, array, n, axis):
@@ -36,7 +42,14 @@ class ScrapBooker:
         ------
         This function should not raise any Exception.
         """
-        pass
+        try:
+            length = array.shape[0] if axis == 1 else array.shape[1]
+            rang = np.arange(n - 1, length, n)
+            print(rang)
+            return np.delete(array, rang, 1 if axis == 0 else 0)
+                
+        except:
+            return None
 
 
     def juxtapose(self, array, n, axis):
@@ -78,4 +91,27 @@ class ScrapBooker:
 
 
 if __name__ == "__main__":
-    print("")
+    spb = ScrapBooker()
+    arr1 = np.arange(0,25).reshape(5,5)
+    print(repr(arr1))
+    print(repr(spb.crop(arr1, (3,1), (1,0))))
+    #Output :
+        # array([[ 5],
+                # [10],
+                # [15]])
+    arr2 = np.array("A B C D E F G H I".split() * 6).reshape(-1,9)
+    print(repr(arr2))
+    print(repr(spb.thin(arr2,3,0)))
+    #Output :
+        # array([['A', 'B', 'D', 'E', 'G', 'H'],
+            # ['A', 'B', 'D', 'E', 'G', 'H'],
+            # ['A', 'B', 'D', 'E', 'G', 'H'],
+            # ['A', 'B', 'D', 'E', 'G', 'H'],
+            # ['A', 'B', 'D', 'E', 'G', 'H'],
+            # ['A', 'B', 'D', 'E', 'G', 'H']], dtype='<U1')
+    arr3 = np.array([[1, 2, 3],[1, 2, 3],[1, 2, 3]])
+    print(repr(spb.juxtapose(arr3, 3, 1)))
+    #Output :
+        # array([[1, 2, 3, 1, 2, 3, 1, 2, 3],
+                # [1, 2, 3, 1, 2, 3, 1, 2, 3],
+                # [1, 2, 3, 1, 2, 3, 1, 2, 3]])
