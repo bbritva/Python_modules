@@ -5,14 +5,29 @@ class NumPyCreator:
     def __init__(self):
         numpy.warnings.filterwarnings('ignore', category=numpy.VisibleDeprecationWarning)
 
+    def check_nested_list(self, lst):
+        lenght = len(lst[0])
+        for i in lst[1:]:
+                if len(i) != lenght:
+                    return False
+        return True
+
+    def check_type(self, lst):
+        if hasattr(lst, "__iter__"):
+            if len(lst) > 0 and  hasattr(lst[0], "__iter__"):
+                return self.check_nested_list(lst)
+            else:
+                return True
+        return False
+
     def from_list(self, lst, dtype=None):
-        return numpy.array(lst, dtype=dtype)
+        return numpy.array(lst, dtype=dtype) if self.check_type(lst) else None
 
     def from_tuple(self, tpl, dtype=None):
-        return numpy.array(tpl, dtype=dtype)
+        return numpy.array(tpl, dtype=dtype) if self.check_type(tpl) else None
 
     def from_iterable(self, itr, dtype=None):
-        return numpy.array(itr, dtype=dtype)
+        return numpy.array(itr, dtype=dtype) if self.check_type(itr) else None
 
     def from_shape(self, shape, value=0, dtype=None):
         return numpy.full(shape, value, dtype=dtype)
@@ -32,7 +47,7 @@ if __name__ == "__main__":
     # [6, 3, 4]])
     print(npc.from_list([[1,2,3],[6,4]]))
     # Output :
-    None
+    # None
     print(npc.from_list([[1,2,3],['a','b','c'],[6,4,7]]))
     # Output :
     # array([['1','2','3'],
