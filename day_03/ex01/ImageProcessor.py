@@ -1,16 +1,24 @@
 import numpy as np
 from PIL import Image
+import matplotlib.pyplot as plt
+
 
 
 class ImageProcessor:
     def load(self, path):
-        img = Image.open(path)
-        print("Loading image of dimensions {} x {}".format(img.size[0], img.size[1]))
-        return np.array(img)
+        try:
+            img = Image.open(path)
+            print(f"Loading image of dimensions {img.size[0]} x {img.size[1]}")
+            return np.array(img)
+        except FileNotFoundError:
+            print("Exception: FileNotFoundError -- strerror: No such file or directory")
+        except OSError:
+            print("Exception: OSError -- strerror: None")
 
     def display(self, array):
-        img = Image.fromarray(array, 'RGB')
-        img.show()
+        plt.imshow(array)
+        plt.axis('off')
+        plt.show()
 
 if __name__ == "__main__":
     imp = ImageProcessor()
@@ -28,3 +36,4 @@ if __name__ == "__main__":
     # Output :
     # Loading image of dimensions 200 x 200
     print(repr(arr))
+    imp.display(arr)
