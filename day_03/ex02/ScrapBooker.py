@@ -45,7 +45,6 @@ class ScrapBooker:
         try:
             axis = 1 if axis == 0 else 0 
             return np.delete(array, np.arange(n - 1, array.shape[axis], n), axis)
-                
         except:
             return None
 
@@ -91,7 +90,10 @@ class ScrapBooker:
         -------
         This function should not raise any Exception.
         """
-        pass
+        try:
+            return np.tile(array, dim)                
+        except:
+            return None
 
 
 if __name__ == "__main__":
@@ -115,6 +117,12 @@ if __name__ == "__main__":
             # ['A', 'B', 'D', 'E', 'G', 'H']], dtype='<U1')
     arr3 = np.array([[1, 2, 3],[1, 2, 3],[1, 2, 3]])
     print(repr(spb.juxtapose(arr3, 3, 1)))
+    #Output :
+        # array([[1, 2, 3, 1, 2, 3, 1, 2, 3],
+                # [1, 2, 3, 1, 2, 3, 1, 2, 3],
+                # [1, 2, 3, 1, 2, 3, 1, 2, 3]])
+    arr3 = np.array([[1, 2],[1, 2],[1, 2]])
+    print(repr(spb.mosaic(arr3, (3, 2))))
     #Output :
         # array([[1, 2, 3, 1, 2, 3, 1, 2, 3],
                 # [1, 2, 3, 1, 2, 3, 1, 2, 3],
