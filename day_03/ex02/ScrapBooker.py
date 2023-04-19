@@ -66,7 +66,13 @@ class ScrapBooker:
         -------
         This function should not raise any Exception.
         """
-        pass
+        try:
+            if axis == 1:
+                return np.tile(array, (1, n))
+            else:
+                return np.tile(array, (n, 1))                
+        except:
+            return None
 
 
     def mosaic(self, array, dim):
