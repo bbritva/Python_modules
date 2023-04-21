@@ -1,17 +1,19 @@
 import numpy as np
+from ImageProcessor import ImageProcessor
+from ColorFilter import ColorFilter
+
+
 
 if __name__ == "__main__":
-    # np.warnings.filterwarnings('ignore', category=np.VisibleDeprecationWarning)
-
-    c = []
-    for i in range(5):
-        c.append(i)
-    a = np.array(c)
-    b = np.array(c)
-    print(b * a)
-
-    ndarr = np.array([[1., 0., 0.], [0., 1.]])
-
-    print(ndarr)
-    print(ndarr.ndim, ndarr.shape, ndarr.size, ndarr.dtype, ndarr.itemsize)
-    
+    imp = ImageProcessor()
+    arr = imp.load("assets/42AI.png")
+    # Output :
+    # Loading image of dimensions 200 x 200
+    cf = ColorFilter()
+    cf.invert(arr)
+    cf.to_green(arr)
+    cf.to_red(arr)
+    cf.to_blue(arr)
+    cf.to_celluloid(arr)
+    cf.to_grayscale(arr, 'm')
+    cf.to_grayscale(arr, 'weight', weights = [0.2, 0.3, 0.5])
