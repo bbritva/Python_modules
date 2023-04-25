@@ -1,6 +1,6 @@
 import numpy as np
-from ImageProcessor import ImageProcessor
-from ColorFilter import ColorFilter
+from ex01.ImageProcessor import ImageProcessor
+from ex03.ColorFilter import ColorFilter
 
 
 
@@ -11,6 +11,8 @@ if __name__ == "__main__":
     # Loading image of dimensions 200 x 200
     cf = ColorFilter()
     cf.invert(arr)
+    print(repr(cf.invert(arr)))
+    imp.display(cf.invert(arr))
     cf.to_green(arr)
     cf.to_red(arr)
     cf.to_blue(arr)

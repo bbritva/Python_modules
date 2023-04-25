@@ -15,7 +15,7 @@ class ColorFilter:
         -------
         This function should not raise any Exception.
         """
-        pass
+        return 256 - array
 
     def to_blue(self, array):
         """
