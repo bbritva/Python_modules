@@ -15,7 +15,12 @@ class ColorFilter:
         -------
         This function should not raise any Exception.
         """
-        return 256 - array
+        new_arr = array.astype(np.int16)
+        slice_arr = new_arr[:,:,0:3]
+        slice_arr *= -1
+        slice_arr += 255
+
+        return new_arr
 
     def to_blue(self, array):
         """
