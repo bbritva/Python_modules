@@ -15,11 +15,11 @@ class ColorFilter:
         -------
         This function should not raise any Exception.
         """
-        new_arr = array.astype(np.int16)
-        slice_arr = new_arr[:,:,0:3]
-        slice_arr *= -1
-        slice_arr += 255
-
+        new_arr = np.full((array.shape[0], array.shape[1], 4), [255,255,255,0])
+        color_arr = new_arr[:,:,0:3]
+        transp_arr = new_arr[:,:,3:4]
+        color_arr -= array[:,:,0:3]
+        transp_arr += array[:,:,3:4]
         return new_arr
 
     def to_blue(self, array):
