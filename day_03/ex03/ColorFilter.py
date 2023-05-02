@@ -36,7 +36,8 @@ class ColorFilter:
         -------
         This function should not raise any Exception.
         """
-        pass
+        new_arr = np.full((array.shape[0], array.shape[1], 4), [0,0,255,255])
+        return np.bitwise_and(new_arr, array)
 
     def to_green(self, array):
         """
@@ -52,7 +53,8 @@ class ColorFilter:
         -------
         This function should not raise any Exception.
         """
-        pass
+        new_arr = np.full((array.shape[0], array.shape[1], 4), [0,255,0,255])
+        return np.bitwise_and(new_arr, array)
 
     def to_red(self, array):
         """
@@ -68,7 +70,8 @@ class ColorFilter:
         -------
         This function should not raise any Exception.
         """
-        pass
+        new_arr = np.full((array.shape[0], array.shape[1], 4), [255,0,0,255])
+        return np.bitwise_and(new_arr, array)
 
     def to_celluloid(self, array):
         """
