@@ -15,11 +15,15 @@ class ColorFilter:
         -------
         This function should not raise any Exception.
         """
-        new_arr = np.full((array.shape[0], array.shape[1], 4), [255,255,255,0])
+        if array.shape[2] == 4:
+            new_arr = np.full((array.shape[0], array.shape[1], 4), [255,255,255,0])
+        else:
+            new_arr = np.full((array.shape[0], array.shape[1], 3), [255,255,255])
         color_arr = new_arr[:,:,0:3]
         transp_arr = new_arr[:,:,3:4]
         color_arr -= array[:,:,0:3]
-        transp_arr += array[:,:,3:4]
+        if array.shape[2] == 4:
+            transp_arr += array[:,:,3:4]
         return new_arr
 
     def to_blue(self, array):
@@ -36,7 +40,10 @@ class ColorFilter:
         -------
         This function should not raise any Exception.
         """
-        new_arr = np.full((array.shape[0], array.shape[1], 4), [0,0,255,255])
+        if array.shape[2] == 4:
+            new_arr = np.full((array.shape[0], array.shape[1], 4), [0,0,255,255])
+        else:
+            new_arr = np.full((array.shape[0], array.shape[1], 3), [0,0,255])
         return np.bitwise_and(new_arr, array)
 
     def to_green(self, array):
@@ -53,7 +60,10 @@ class ColorFilter:
         -------
         This function should not raise any Exception.
         """
-        new_arr = np.full((array.shape[0], array.shape[1], 4), [0,255,0,255])
+        if array.shape[2] == 4:
+            new_arr = np.full((array.shape[0], array.shape[1], 4), [0,255,0,255])
+        else:
+            new_arr = np.full((array.shape[0], array.shape[1], 3), [0,255,0])
         return np.bitwise_and(new_arr, array)
 
     def to_red(self, array):
@@ -70,7 +80,10 @@ class ColorFilter:
         -------
         This function should not raise any Exception.
         """
-        new_arr = np.full((array.shape[0], array.shape[1], 4), [255,0,0,255])
+        if array.shape[2] == 4:
+            new_arr = np.full((array.shape[0], array.shape[1], 4), [255,0,0,255])
+        else:
+            new_arr = np.full((array.shape[0], array.shape[1], 3), [255,0,0])
         return np.bitwise_and(new_arr, array)
 
     def to_celluloid(self, array):
