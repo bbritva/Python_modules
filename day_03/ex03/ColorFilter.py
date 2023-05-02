@@ -17,13 +17,12 @@ class ColorFilter:
         """
         if array.shape[2] == 4:
             new_arr = np.full((array.shape[0], array.shape[1], 4), [255,255,255,0])
+            transp_arr = new_arr[:,:,3:4]
+            transp_arr += array[:,:,3:4]
         else:
             new_arr = np.full((array.shape[0], array.shape[1], 3), [255,255,255])
         color_arr = new_arr[:,:,0:3]
-        transp_arr = new_arr[:,:,3:4]
         color_arr -= array[:,:,0:3]
-        if array.shape[2] == 4:
-            transp_arr += array[:,:,3:4]
         return new_arr
 
     def to_blue(self, array):

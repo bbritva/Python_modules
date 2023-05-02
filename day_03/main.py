@@ -6,8 +6,8 @@ from ex03.ColorFilter import ColorFilter
 
 if __name__ == "__main__":
     imp = ImageProcessor()
-    # arr = imp.load("./resources/elon_canaGAN.png")
-    arr = imp.load("./resources/42AI.png")
+    arr = imp.load("./resources/elon_canaGAN.png")
+    # arr = imp.load("./resources/42AI.png")
     # Output :
     # Loading image of dimensions 200 x 200
     if not arr is None:
