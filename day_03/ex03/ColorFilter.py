@@ -104,7 +104,13 @@ class ColorFilter:
         -------
         This function should not raise any Exception.
         """
-        pass
+        new_arr = array.copy()
+        color_arr = new_arr[:,:,0:3]
+        slice_array = array[:,:,0:3]
+        limits = np.linspace(0, 255, num=3, endpoint=False)
+        for limit in limits:
+            color_arr[slice_array >= limit] = limit
+        return new_arr
 
     def to_grayscale(self, array, filter, **kwargs):
         """
