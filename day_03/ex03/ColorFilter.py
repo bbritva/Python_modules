@@ -1,6 +1,15 @@
 import numpy as np
 
 class ColorFilter:
+    def _guard_(func):
+        def wrapper(*args, **kwargs):
+            try:
+                return(func(*args, **kwargs))
+            except:
+                return None
+        return wrapper
+
+    @_guard_
     def invert(self, array):
         """
         Inverts the color of the image received as a numpy array.
@@ -131,4 +140,10 @@ class ColorFilter:
         -------
         This function should not raise any Exception.
         """
-        pass
+        new_arr = array.copy()
+        color = new_arr[:,:,0:3]
+
+        if filter == 'mean':
+            return None
+
+        return None
