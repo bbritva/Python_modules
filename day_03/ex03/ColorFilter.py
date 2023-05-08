@@ -1,8 +1,14 @@
 import numpy as np
 
 class ColorFilter:
+    basic_3_full_color = [255,255,255]
+    basic_4_full_color = [255,255,255,0]
+
+
     def _guard_(func):
         def wrapper(*args, **kwargs):
+            if not isinstance(args[1], np.ndarray):
+                return None
             try:
                 return(func(*args, **kwargs))
             except:
@@ -24,15 +30,9 @@ class ColorFilter:
         -------
         This function should not raise any Exception.
         """
-        if array.shape[2] == 4:
-            new_arr = np.full((array.shape[0], array.shape[1], 4), [255,255,255,0])
-            transp_arr = new_arr[:,:,3:4]
-            transp_arr += array[:,:,3:4]
-        else:
-            new_arr = np.full((array.shape[0], array.shape[1], 3), [255,255,255])
-        color_arr = new_arr[:,:,0:3]
-        color_arr -= array[:,:,0:3]
-        return new_arr
+        new_arr = 255 - array
+        new_arr[:,:,3:] = array[:,:,3:]
+        return new_arr 
 
     def to_blue(self, array):
         """
@@ -48,11 +48,9 @@ class ColorFilter:
         -------
         This function should not raise any Exception.
         """
-        if array.shape[2] == 4:
-            new_arr = np.full((array.shape[0], array.shape[1], 4), [0,0,255,255])
-        else:
-            new_arr = np.full((array.shape[0], array.shape[1], 3), [0,0,255])
-        return np.bitwise_and(new_arr, array)
+        new_arr = np.zeros(array.shape, dtype=np.int16)
+        new_arr[:,:,2:4] = array[:,:,2:4]
+        return new_arr
 
     def to_green(self, array):
         """
@@ -68,11 +66,10 @@ class ColorFilter:
         -------
         This function should not raise any Exception.
         """
-        if array.shape[2] == 4:
-            new_arr = np.full((array.shape[0], array.shape[1], 4), [0,255,0,255])
-        else:
-            new_arr = np.full((array.shape[0], array.shape[1], 3), [0,255,0])
-        return np.bitwise_and(new_arr, array)
+        new_arr = array.copy()
+        new_arr[:,:,0] *= 0
+        new_arr[:,:,2] *= 0
+        return new_arr
 
     def to_red(self, array):
         """
@@ -88,11 +85,10 @@ class ColorFilter:
         -------
         This function should not raise any Exception.
         """
-        if array.shape[2] == 4:
-            new_arr = np.full((array.shape[0], array.shape[1], 4), [255,0,0,255])
-        else:
-            new_arr = np.full((array.shape[0], array.shape[1], 3), [255,0,0])
-        return np.bitwise_and(new_arr, array)
+        new_arr = array.copy()
+        new_arr[:,:,0:3] -= self.to_blue(array)[:,:,0:3] + self.to_green(array)[:,:,0:3]
+        return new_arr
+
 
     def to_celluloid(self, array):
         """
@@ -116,7 +112,7 @@ class ColorFilter:
         new_arr = array.copy()
         color_arr = new_arr[:,:,0:3]
         slice_array = array[:,:,0:3]
-        limits = np.linspace(0, 255, num=3, endpoint=False)
+        limits = np.linspace(0, 250, num=3, endpoint=False)
         for limit in limits:
             color_arr[slice_array >= limit] = limit
         return new_arr
