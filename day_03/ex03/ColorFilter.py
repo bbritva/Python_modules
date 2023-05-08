@@ -112,9 +112,14 @@ class ColorFilter:
         new_arr = array.copy()
         color_arr = new_arr[:,:,0:3]
         slice_array = array[:,:,0:3]
-        limits = np.linspace(0, 250, num=3, endpoint=False)
-        for limit in limits:
-            color_arr[slice_array >= limit] = limit
+        limits = np.linspace(255*5/6, 255 / 6, num=3, endpoint=True, dtype=np.int16)
+        values = np.linspace(255, 0, num=4, endpoint=True, dtype=np.int16)
+        color_arr[slice_array >= limits[0]] = values[0]
+        mask = (slice_array < limits[0]) & (slice_array >= limits[1])
+        color_arr[mask] = values[1]
+        mask = (slice_array < limits[1]) & (slice_array >= limits[2])
+        color_arr[mask] = values[2]
+        color_arr[slice_array < limits[2]] = values[3]
         return new_arr
 
     def to_grayscale(self, array, filter, **kwargs):
