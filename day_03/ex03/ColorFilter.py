@@ -146,8 +146,13 @@ class ColorFilter:
         -------
         This function should not raise any Exception.
         """
-
-        if (filter in ['m', 'mean']):
+        values = None
+        if filter in ['m', 'mean']:
             values = (np.sum(array[:,:, 0:3], axis=-1, keepdims=True, dtype=np.int16) / 3).astype(dtype=np.int16)
-            return np.dstack((np.tile(values, 3), array[:,:, 3:4]))
-        return None
+        elif filter in ['w', 'weight'] \
+            and isinstance(kwargs['weights'], list)\
+                and len(kwargs['weights']) == 3\
+                    and np.sum(kwargs['weights']) == 1:
+            values = (np.sum(array[:,:, 0:3] * kwargs['weights'], axis=-1, keepdims=True)).astype(dtype=np.int16)
+        return np.dstack((np.tile(values, 3), array[:,:, 3:4]))
+

@@ -6,8 +6,8 @@ from ex03.ColorFilter import ColorFilter
 
 if __name__ == "__main__":
     imp = ImageProcessor()
-    arr = imp.load("./resources/elon_canaGAN.png")
-    # arr = imp.load("/home/grvelva/Python_modules/day_03/resources/42AI.png")
+    # arr = imp.load("./resources/elon_canaGAN.png")
+    arr = imp.load("/home/grvelva/Python_modules/day_03/resources/42AI.png")
     # Output :
     # Loading image of dimensions 200 x 200
     if not arr is None:
@@ -35,4 +35,7 @@ if __name__ == "__main__":
         cf.to_blue(arr)
         cf.to_celluloid(arr)
         cf.to_grayscale(arr, 'm')
-        cf.to_grayscale(arr, 'weight', weights = [0.2, 0.3, 0.5])
+        gsw_arr = cf.to_grayscale(arr, 'weight', weights = [0.8, 0.1, 0.1])
+        # print(gsw_arr[200,200])
+        print(gsw_arr)
+        imp.display(gsw_arr)
