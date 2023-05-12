@@ -34,6 +34,7 @@ class ColorFilter:
         new_arr[:,:,3:] = array[:,:,3:]
         return new_arr 
 
+    @_guard_
     def to_blue(self, array):
         """
         Applies a blue filter to the image received as a numpy array.
@@ -52,6 +53,7 @@ class ColorFilter:
         new_arr[:,:,2:4] = array[:,:,2:4]
         return new_arr
 
+    @_guard_
     def to_green(self, array):
         """
         Applies a green filter to the image received as a numpy array.
@@ -71,6 +73,7 @@ class ColorFilter:
         new_arr[:,:,2] *= 0
         return new_arr
 
+    @_guard_
     def to_red(self, array):
         """
         Applies a red filter to the image received as a numpy array.
@@ -90,6 +93,7 @@ class ColorFilter:
         return new_arr
 
 
+    @_guard_
     def to_celluloid(self, array):
         """
         Applies a celluloid filter to the image received as a numpy array.
@@ -122,6 +126,7 @@ class ColorFilter:
         color_arr[slice_array < limits[2]] = values[3]
         return new_arr
 
+    @_guard_
     def to_grayscale(self, array, filter, **kwargs):
         """
         Applies a grayscale filter to the image received as a numpy array.
@@ -141,10 +146,8 @@ class ColorFilter:
         -------
         This function should not raise any Exception.
         """
-        new_arr = array.copy()
-        color = new_arr[:,:,0:3]
 
-        if filter == 'mean':
-            return None
-
+        if (filter in ['m', 'mean']):
+            values = (np.sum(array[:,:, 0:3], axis=-1, keepdims=True, dtype=np.int16) / 3).astype(dtype=np.int16)
+            return np.dstack((np.tile(values, 3), array[:,:, 3:4]))
         return None
