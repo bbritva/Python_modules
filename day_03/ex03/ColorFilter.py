@@ -1,10 +1,6 @@
 import numpy as np
 
 class ColorFilter:
-    basic_3_full_color = [255,255,255]
-    basic_4_full_color = [255,255,255,0]
-
-
     def _guard_(func):
         def wrapper(*args, **kwargs):
             if not isinstance(args[1], np.ndarray):
@@ -30,7 +26,7 @@ class ColorFilter:
         -------
         This function should not raise any Exception.
         """
-        new_arr = 255 - array
+        new_arr = 1 - array
         new_arr[:,:,3:] = array[:,:,3:]
         return new_arr 
 
@@ -49,7 +45,7 @@ class ColorFilter:
         -------
         This function should not raise any Exception.
         """
-        new_arr = np.zeros(array.shape, dtype=np.int16)
+        new_arr = np.zeros(array.shape, dtype=np.float32)
         new_arr[:,:,2:4] = array[:,:,2:4]
         return new_arr
 
@@ -116,8 +112,8 @@ class ColorFilter:
         new_arr = array.copy()
         color_arr = new_arr[:,:,0:3]
         slice_array = array[:,:,0:3]
-        limits = np.linspace(255*5/6, 255 / 6, num=3, endpoint=True, dtype=np.int16)
-        values = np.linspace(255, 0, num=4, endpoint=True, dtype=np.int16)
+        limits = np.linspace(5 / 6, 1 / 6, num=3, endpoint=True, dtype=np.float32)
+        values = np.linspace(1, 0, num=4, endpoint=True, dtype=np.float32)
         color_arr[slice_array >= limits[0]] = values[0]
         mask = (slice_array < limits[0]) & (slice_array >= limits[1])
         color_arr[mask] = values[1]
@@ -148,11 +144,11 @@ class ColorFilter:
         """
         values = None
         if filter in ['m', 'mean']:
-            values = (np.sum(array[:,:, 0:3], axis=-1, keepdims=True, dtype=np.int16) / 3).astype(dtype=np.int16)
+            values = np.sum(array[:,:, 0:3], axis=-1, keepdims=True, dtype=np.float32) / 3
         elif filter in ['w', 'weight'] \
             and isinstance(kwargs['weights'], list)\
                 and len(kwargs['weights']) == 3\
                     and np.sum(kwargs['weights']) == 1:
-            values = (np.sum(array[:,:, 0:3] * kwargs['weights'], axis=-1, keepdims=True)).astype(dtype=np.int16)
+            values = np.sum(array[:,:, 0:3] * kwargs['weights'], axis=-1, keepdims=True)
         return np.dstack((np.tile(values, 3), array[:,:, 3:4]))
 
