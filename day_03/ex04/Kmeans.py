@@ -66,7 +66,11 @@ class KmeansClustering:
         ax.set_xlabel("height")
         ax.set_ylabel("weight")
         ax.set_zlabel("bone_density")
-        ax.scatter(centers[:,0], centers[:,1], centers[:,2], c=np.arange(self.ncentroid), marker='+', s=150)
+        ax.scatter(centers[:,0], centers[:,1], centers[:,2], c=np.arange(self.ncentroid), marker='X', s=150, edgecolor="k")
+        if self.ncentroid == 4:
+            for i, center in enumerate(self.model.cluster_centers_):
+                amount = sum(self.model.labels_ == i)
+                print("Center #", i, "has coordinates", center, "and", amount, "individuals")
         ax.scatter3D(X[:,0], X[:,1], X[:,2], c=self.model.labels_)
         plt.show()
 
