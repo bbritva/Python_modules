@@ -1,17 +1,14 @@
 import sys
 import numpy as np
-import pandas as pd
 from mpl_toolkits import mplot3d
 import matplotlib.pyplot as plt
-import seaborn as sns
-from sklearn.datasets import make_blobs
 from sklearn.cluster import KMeans
 
 def _guard_(func):
     def wrapper(*args, **kwargs):
-        # if not isinstance(args[0], np.ndarray):
-        #     print("Not a numpy array", file=sys.stderr)
-        #     return None
+        if not isinstance(args[1], np.ndarray):
+            print("Not a numpy array", file=sys.stderr)
+            return None
         try:
             return(func(*args, **kwargs))
         except Exception as e:
@@ -20,7 +17,6 @@ def _guard_(func):
     return wrapper
 
 class KmeansClustering:
-    @_guard_
     def __init__(self, max_iter=20, ncentroid=5):
         self.ncentroid = ncentroid # number of centroids
         self.max_iter = max_iter # number of max iterations to update the centroids
@@ -60,17 +56,23 @@ class KmeansClustering:
         This function should not raise any Exception.
         """
         self.fit(X)
+        print(repr(self.model.cluster_centers_))
         return self.model.labels_
+    
+    @_guard_
+    def show(self, X):
+        ax = plt.axes(projection='3d')
+        centers = self.model.cluster_centers_
+        ax.set_xlabel("height")
+        ax.set_ylabel("weight")
+        ax.set_zlabel("bone_density")
+        ax.scatter(centers[:,0], centers[:,1], centers[:,2], c=np.arange(self.ncentroid), marker='+', s=150)
+        ax.scatter3D(X[:,0], X[:,1], X[:,2], c=self.model.labels_)
+        plt.show()
+
 
 if __name__ == "__main__":
-    raw_data = pd.read_csv('./solar_system_census.csv', index_col = 0)
-
-    model = KmeansClustering(max_iter=20, ncentroid=5)
+    raw_data = np.genfromtxt('./solar_system_census.csv', delimiter=',')[1:, 1:]
+    model = KmeansClustering(max_iter=20, ncentroid=4)
     model.fit(raw_data)
-
-    fig = plt.figure()
-    ax = plt.axes(projection='3d')
-
-
-    ax.scatter3D(raw_data['height'], raw_data['weight'], raw_data['bone_density'], c=model.predict(raw_data))
-    plt.show()
+    model.show(raw_data)
