@@ -71,8 +71,32 @@ class KmeansClustering:
         plt.show()
 
 
+def get_param(name, argv):
+    for arg in argv:
+        if arg.startswith(name + '='):
+            return arg[len(name) + 1 : ]
+    raise ValueError
+
+
+def parse_params(argv):
+    try:
+        if len(argv) is not 3:
+            raise ValueError
+        params = []
+        params.append(get_param('filepath', argv))
+        params.append(int(get_param('ncentroid', argv)))
+        params.append(int(get_param('max_iter', argv)))
+    except:
+        print("wrong parameters\nUsage example: python Kmeans.py filepath='../resources/solar_system_census.csv' ncentroid=4 max_iter=30")
+        return None
+    print(params)
+    return params
+
+
 if __name__ == "__main__":
-    raw_data = np.genfromtxt('./solar_system_census.csv', delimiter=',')[1:, 1:]
-    model = KmeansClustering(max_iter=20, ncentroid=4)
-    model.fit(raw_data)
-    model.show(raw_data)
+    params = parse_params(sys.argv[1:])
+    if params:
+        raw_data = np.genfromtxt(params[0], delimiter=',')[1:, 1:]
+        model = KmeansClustering(max_iter=params[2], ncentroid=params[1])
+        model.fit(raw_data)
+        model.show(raw_data)
