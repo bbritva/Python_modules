@@ -9,7 +9,7 @@ class ImageProcessor:
         try:
             img = Image.open(path)
             print(f"Loading image of dimensions {img.size[0]} x {img.size[1]}")
-            return np.array(img, dtype = np.int16)
+            return np.array(img, dtype=np.float32) / 255
         except FileNotFoundError:
             print("Exception: FileNotFoundError -- strerror: No such file or directory")
         except OSError:
