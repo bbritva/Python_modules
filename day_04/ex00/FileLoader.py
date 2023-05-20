@@ -31,7 +31,7 @@ class FileLoader:
 
 if __name__ == "__main__":
     fl = FileLoader()
-    data = fl.load("./solar_system_census.csv")
+    data = fl.load("../data/solar_system_census.csv")
     fl.display(data, 12)
-    data = fl.load("./ssc_short.csv")
+    data = fl.load("../data/ssc_short.csv")
     fl.display(data, 12)

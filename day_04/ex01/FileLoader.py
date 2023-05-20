@@ -29,9 +29,3 @@ class FileLoader:
         rows = df.shape[0] if df.shape[0] < n else n
         print("[", rows, "rows x", df.shape[1], "columns]")
 
-if __name__ == "__main__":
-    fl = FileLoader()
-    data = fl.load("./solar_system_census.csv")
-    fl.display(data, 12)
-    data = fl.load("./ssc_short.csv")
-    fl.display(data, 12)
