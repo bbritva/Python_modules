@@ -3,7 +3,6 @@ from FileLoader import FileLoader
 class SpatioTemporalData:
     def __init__(self, data):
         self.data = data
-        pass
     
     def when(self, location):
         """takes a location as an argument and returns a list containing the
