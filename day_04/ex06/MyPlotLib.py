@@ -12,7 +12,7 @@ def _guard_(func):
         try:
             return(func(*args, **kwargs))
         except Exception as e:
-            print(e) 
+            print("exception",e) 
             return None
     return wrapper
 
@@ -30,12 +30,14 @@ class MyPlotLib:
     @staticmethod
     @_guard_
     def density(data, features):
-        pass    
+        pd.DataFrame(data[features]).plot(kind='density')
+        plt.show()    
     
     @staticmethod
     @_guard_
     def pair_plot(data, features):
-        pass    
+        pd.plotting.scatter_matrix(data[features])
+        plt.show()
     
     @staticmethod
     @_guard_
@@ -46,4 +48,6 @@ class MyPlotLib:
 if __name__ == "__main__":
     raw_data = pd.read_csv('../data/athlete_events.csv')
     print("Loading dataset of dimensions", raw_data.shape[0], "x", raw_data.shape[1])
-    MyPlotLib.histogram(raw_data, ["Height", "Weight", "Year"])
+    MyPlotLib.histogram(raw_data, ["Height", "Weight"])
+    MyPlotLib.density(raw_data, ["Height", "Weight"])
+    MyPlotLib.pair_plot(raw_data, ["Height", "Weight"])
