@@ -12,7 +12,7 @@ def _guard_(func):
         try:
             return(func(*args, **kwargs))
         except Exception as e:
-            print("exception",e) 
+            print("exception", e) 
             return None
     return wrapper
 
@@ -42,7 +42,9 @@ class MyPlotLib:
     @staticmethod
     @_guard_
     def box_plot(data, features):
-        pass
+        fig, axs = plt.subplots()
+        axs.boxplot(data[features].dropna(), labels=features)
+        plt.show()
 
 
 if __name__ == "__main__":
@@ -51,3 +53,4 @@ if __name__ == "__main__":
     MyPlotLib.histogram(raw_data, ["Height", "Weight"])
     MyPlotLib.density(raw_data, ["Height", "Weight"])
     MyPlotLib.pair_plot(raw_data, ["Height", "Weight"])
+    MyPlotLib.box_plot(raw_data, ["Height", "Weight"])
