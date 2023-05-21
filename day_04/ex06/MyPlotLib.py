@@ -20,23 +20,25 @@ class MyPlotLib:
     @staticmethod
     @_guard_
     def histogram(data, features):
-        fig, axs = plt.subplots(ncols=len(features), nrows=1, figsize=(5.5, 3.5))
+        fig, axs = plt.subplots(ncols=len(features), nrows=1, layout="constrained")
         for i, feature in enumerate(features):
             axs[i].hist(data[feature].dropna())
+            axs[i].set_title(feature)
+            axs[i].grid()
         plt.show()
     
-    @_guard_
     @staticmethod
+    @_guard_
     def density(data, features):
         pass    
     
-    @_guard_
     @staticmethod
+    @_guard_
     def pair_plot(data, features):
         pass    
     
-    @_guard_
     @staticmethod
+    @_guard_
     def box_plot(data, features):
         pass
 
@@ -44,4 +46,4 @@ class MyPlotLib:
 if __name__ == "__main__":
     raw_data = pd.read_csv('../data/athlete_events.csv')
     print("Loading dataset of dimensions", raw_data.shape[0], "x", raw_data.shape[1])
-    MyPlotLib.histogram(raw_data, ["Height", "Weight"])
+    MyPlotLib.histogram(raw_data, ["Height", "Weight", "Year"])
