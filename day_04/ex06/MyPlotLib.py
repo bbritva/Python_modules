@@ -2,6 +2,7 @@ import sys
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import seaborn as sb
 
 
 def _guard_(func):
@@ -30,13 +31,13 @@ class MyPlotLib:
     @staticmethod
     @_guard_
     def density(data, features):
-        pd.DataFrame(data[features]).plot(kind='density')
+        sb.kdeplot(data[features].dropna())
         plt.show()    
     
     @staticmethod
     @_guard_
     def pair_plot(data, features):
-        pd.plotting.scatter_matrix(data[features])
+        pd.plotting.scatter_matrix(data[features].dropna())
         plt.show()
     
     @staticmethod
