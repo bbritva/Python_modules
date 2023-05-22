@@ -30,14 +30,11 @@ class Komparator:
         compare the height distributions of men vs. women with two box plots"""
         data = self.data[[categorical_var, numerical_var]].dropna()
         features = self.data[categorical_var].unique()
-        print(features)
 
         fig, axs = plt.subplots(ncols=len(features), sharey=True)
-
         for i, feature in enumerate(features):
             axs[i].boxplot(data[data[categorical_var] == feature][numerical_var])
             axs[i].set_title(feature)
-            axs[i].set
         fig.tight_layout()
         plt.show()
 
@@ -46,7 +43,12 @@ class Komparator:
         """displays the density of the
         numerical variable. Each subpopulation should be represented by a separate curve
         on the graph."""
-        pass
+        data = self.data[[categorical_var, numerical_var]].dropna()
+        features = self.data[categorical_var].unique()
+
+        for feature in features:
+            sb.kdeplot(data[data[categorical_var] == feature][numerical_var], label=feature)
+        plt.show()
 
     @_guard_
     def compare_histograms(self, categorical_var, numerical_var): 
@@ -61,5 +63,6 @@ if __name__ == "__main__":
         print("Loading dataset of dimensions", raw_data.shape[0], "x", raw_data.shape[1])
         kmp = Komparator(raw_data)
         kmp.compare_box_plots("Sex", "Height")
+        kmp.density("Sex", "Height")
     except:
         print("Error: File corrupt")
