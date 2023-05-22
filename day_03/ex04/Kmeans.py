@@ -76,7 +76,6 @@ class KmeansClustering:
                 print("Center #", i, "has coordinates",
                       center, "and", amount, "individuals")
         ax.scatter3D(X[:, 0], X[:, 1], X[:, 2], c=self.model.labels_)
-        plt.show()
         highest = centers[centers[:, 0].argsort()[::-1]]
         bonest = centers[centers[:, 2].argsort()]
         if np.array_equal(highest[0], bonest[0]):
@@ -104,6 +103,8 @@ class KmeansClustering:
                 print("Can't determine origin")
         else:
             print("Can't determine origin")
+        plt.show()
+
 
 # Belt tallest and has lowest bone density
 # Earth can be on 1 or 2 pos by height
