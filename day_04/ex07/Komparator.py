@@ -93,6 +93,7 @@ if __name__ == "__main__":
     try:
         raw_data = pd.read_csv('../data/athlete_events.csv')
         print("Loading dataset of dimensions", raw_data.shape[0], "x", raw_data.shape[1])
+        print(raw_data[raw_data["Weight"] > 170][["Name", "Sport", "Weight"]])
         kmp = Komparator(raw_data)
         kmp.compare_box_plots("Sex", "Height")
         kmp.density("Sex", "Height")
@@ -100,5 +101,5 @@ if __name__ == "__main__":
         kmp.compare_box_plots("Sex", ["Height", "Weight"])
         kmp.density("Sex", ["Height", "Weight"])
         kmp.compare_histograms("Sex", ["Height", "Weight"])
-    except:
-        print("Error: File corrupt")
+    except Exception as exc:
+        print("Error: ", exc, file=sys.stderr)
