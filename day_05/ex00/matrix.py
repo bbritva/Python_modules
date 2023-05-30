@@ -35,9 +35,9 @@ class Matrix:
 
     def T(self):
         newList = []
-        for i in range(self.shape[0]):
+        for i in range(self.shape[1]):
             innerList = []
-            for j in range(self.shape[1]):
+            for j in range(self.shape[0]):
                 innerList.append(self.data[j][i])
             newList.append(innerList)
         return Matrix(newList)
@@ -139,3 +139,7 @@ if __name__ == "__main__":
                 [4.0, 5.0],
                 [6.0, 7.0]])
     print(m1 * m2)
+
+    m = Matrix([[1.0, 2.0, 3.0, 4.0]])
+    print(m)
+    print(m.T())
