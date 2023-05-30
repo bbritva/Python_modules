@@ -6,6 +6,22 @@ class Matrix:
     def isListOfLists(data):
         return isinstance(data, list) and \
             len(data[0]) > 0 and isinstance(data[0], list)
+    
+    @staticmethod
+    def MMmutipy(first, other):
+        newList = []
+        m = first.shape[0]
+        n = first.shape[1]
+        p = other.shape[1]
+        for i in range(m):
+            innerList = []
+            for j in range(p):
+                newEl = 0
+                for k in range(n):
+                    newEl += first.data[i][k] * other.data[k][j]
+                innerList.append(newEl)
+            newList.append(innerList)
+        return Matrix(newList)
 
     def __init__(self, data):
         if Matrix.isListOfLists(data):
@@ -73,21 +89,33 @@ class Matrix:
         return Matrix(newList)
 
     def __rtruediv__(self, num):
-        raise NotImplementedError(
-            "Division of a scalar by a Matrix is not defined here.")
-
-    # mul & rmul: only scalars (to perform multiplication of Matrix by a scalar).
-
-    def __mul__(self, num):
+        """Warning: can raise DivisionByZeroException"""
         if not isinstance(num, (int, float)):
             raise TypeError("wrong types")
         newList = []
         for line in self.data:
             innerList = []
             for i in range(len(line)):
-                innerList.append(line[i] * num)
+                innerList.append(num / line[i])
             newList.append(innerList)
         return Matrix(newList)
+
+    # mul : scalars, vectors and matrices , can have errors with vectors and matrices,
+    # returns a Vector if we perform Matrix * Vector mutliplication.
+
+    def __mul__(self, other):
+        if isinstance(other, (int, float)):
+            newList = []
+            for line in self.data:
+                innerList = []
+                for i in range(len(line)):
+                    innerList.append(line[i] * other)
+                newList.append(innerList)
+            return Matrix(newList)
+        elif isinstance(other, Matrix):
+            if self.shape[1] == other.shape[0]:
+                return Matrix.MMmutipy(self, other)
+
 
     def __rmul__(self, num):
         return self.__mul__(num)
@@ -96,7 +124,7 @@ class Matrix:
         return self.__str__()
 
     def __str__(self):
-        line = '\n'.join(self.data[k].__str__() for k in range(self.shape[0]))
+        line = '[' + ',\n '.join(self.data[k].__str__() for k in range(self.shape[0])) + ']'
         return line
 
 
@@ -104,3 +132,10 @@ if __name__ == "__main__":
     m = Matrix([[1.0, 2.0], [3.0, 4.0]])
     print(m)
     print(m.T())
+    m1 = Matrix([[0.0, 1.0, 2.0, 3.0],
+                [0.0, 2.0, 4.0, 6.0]])
+    m2 = Matrix([[0.0, 1.0],
+                [2.0, 3.0],
+                [4.0, 5.0],
+                [6.0, 7.0]])
+    print(m1 * m2)
