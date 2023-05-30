@@ -1,51 +1,28 @@
-class Matrix:
-    def __init__(self, data, shape) -> None:
-        self.data = data
-        self.shape = data.shape()
-        
-def isListOfLists(data):
-    return isinstance(data, list) and \
-        len(data[0]) > 0 and isinstance(data[0], list)
-
-
-def checkShape(shape):
-    return (shape[0] == 1 and shape[1] > 0) or (shape[0] > 0 and shape[1] == 1)
+from copy import deepcopy
 
 
 class Matrix:
+    @staticmethod
+    def isListOfLists(data):
+        return isinstance(data, list) and \
+            len(data[0]) > 0 and isinstance(data[0], list)
+
     def __init__(self, data):
-        if isListOfLists(data):
-            self.data = data
+        if Matrix.isListOfLists(data):
+            self.data = deepcopy(data)
             self.shape = (len(data), len(data[0]))
         elif isinstance(data, tuple) and len(data) == 2 and data[0] > 0 and data[1] >= 0:
-            self.data = []
-            for i in range(data[0]):
-                innerList = []
-                for j in range(data[1]):
-                    innerList.append(0)
-                self.data.append(innerList)
+            self.data = [[0] * data[1] for i in range(data[0])]
+            self.shape = data
         else:
             raise ValueError
 
-    def dot(self, other):
-        if isinstance(other, Matrix) and self.shape == other.shape:
-            result = 0
-            for i in range(len(self.data)):
-                for j in range(len(self.data[i])):
-                    result += self.data[i][j] * other.data[i][j]
-            return result
-        else:
-            raise TypeError("wrong types")
-
     def T(self):
         newList = []
-        if self.shape[0] == 1:
-            for i in range(len(self.data[0])):
-                newList.append([self.data[0][i],])
-        else:
+        for i in range(self.shape[0]):
             innerList = []
-            for line in self.data:
-                innerList.append(line[0])
+            for j in range(self.shape[1]):
+                innerList.append(self.data[j][i])
             newList.append(innerList)
         return Matrix(newList)
 
@@ -116,7 +93,14 @@ class Matrix:
         return self.__mul__(num)
 
     def __repr__(self):
-        return self.data.__str__()
+        return self.__str__()
 
     def __str__(self):
-        return self.data.__str__()
+        line = '\n'.join(self.data[k].__str__() for k in range(self.shape[0]))
+        return line
+
+
+if __name__ == "__main__":
+    m = Matrix([[1.0, 2.0], [3.0, 4.0]])
+    print(m)
+    print(m.T())
