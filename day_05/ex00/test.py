@@ -1,3 +1,4 @@
+from termcolor import cprint
 from matrix import Matrix, Vector
 
 
@@ -35,7 +36,7 @@ if __name__ == "__main__":
     print(v2)
     print(v1.T())
     v1 = Vector([[1], [2], [3]])
-    v2 = Vector([[2], [4], [8]])
+    v2 = Vector([[0], [4], [8]])
 
     print("v1 * v2")
     print(v1 * v2)
@@ -47,3 +48,9 @@ if __name__ == "__main__":
     print(v1 / 2)
     print("3 / v2")
     print(3 / v2)
+
+    m1 = Matrix([[0.0, 1.0, 2.0],
+    [0.0, 2.0, 4.0]])
+    v1 = Vector([[1], [2], [3]])
+    print("m1 * v1")
+    print(m1 * v1)
