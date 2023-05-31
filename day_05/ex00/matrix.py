@@ -5,7 +5,8 @@ class Matrix:
     @staticmethod
     def isListOfLists(data):
         return isinstance(data, list) and \
-            len(data[0]) > 0 and isinstance(data[0], list)
+            len(data[0]) > 0 and isinstance(data[0], list) and \
+            not isinstance(data[0][0], list)
     
     @staticmethod
     def MMmutipy(first, other):
@@ -124,22 +125,30 @@ class Matrix:
         return self.__str__()
 
     def __str__(self):
-        line = '[' + ',\n '.join(self.data[k].__str__() for k in range(self.shape[0])) + ']'
+        line = 'Matrix([' + ', '.join(self.data[k].__str__() for k in range(self.shape[0])) + ']]'
         return line
 
 
-if __name__ == "__main__":
-    m = Matrix([[1.0, 2.0], [3.0, 4.0]])
-    print(m)
-    print(m.T())
-    m1 = Matrix([[0.0, 1.0, 2.0, 3.0],
-                [0.0, 2.0, 4.0, 6.0]])
-    m2 = Matrix([[0.0, 1.0],
-                [2.0, 3.0],
-                [4.0, 5.0],
-                [6.0, 7.0]])
-    print(m1 * m2)
-
-    m = Matrix([[1.0, 2.0, 3.0, 4.0]])
-    print(m)
-    print(m.T())
+class Vector(Matrix):
+    @staticmethod
+    def isRowOrColumn(data):
+        return isinstance(data, list) and \
+            len(data[0]) > 0 and isinstance(data[0], list) and \
+            (len(data) == 1 or len(data[0]) == 1)
+    
+    def __init__(self, data):
+        if Vector.isRowOrColumn(data):
+            self.data = deepcopy(data)
+            self.shape = (len(data), len(data[0]))
+        else:
+            raise ValueError
+        
+    def dot(self, other):
+        if isinstance(other, Vector) and self.shape == other.shape:
+            result = 0
+            for i in range(len(self.values)):
+                for j in range(len(self.values[i])):
+                    result += self.values[i][j] * other.values[i][j]
+            return result
+        else:
+            raise TypeError("wrong types")
