@@ -3,8 +3,9 @@ import numpy as np
 
 def _guard_(func):
     def wrapper(self, arr, *args, **kwargs):
-        if isinstance(arr, np.ndarray):
-            arr = arr.flatten().tolist()
+        if isinstance(arr, list):
+            arr = np.array(arr)
+        arr = arr.flatten()
         try:
             return (func(self, arr, *args, **kwargs))
         except Exception as e:
