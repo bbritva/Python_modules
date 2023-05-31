@@ -1,9 +1,14 @@
+import numpy as np
+
 
 def _guard_(func):
-    def wrapper(*args, **kwargs):
+    def wrapper(self, arr, *args, **kwargs):
+        if isinstance(arr, np.ndarray):
+            arr = arr.flatten().tolist()
         try:
-            return (func(*args, **kwargs))
-        except Exception:
+            return (func(self, arr, *args, **kwargs))
+        except Exception as e:
+            print(e)
             return None
     return wrapper
 
