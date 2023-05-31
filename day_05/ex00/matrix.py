@@ -70,6 +70,16 @@ class Matrix:
                 innerList.append(first.data[i][j] - second.data[i][j])
             newList.append(innerList)
         return newList
+    
+    @staticmethod
+    def Tlist(matrix):
+        newList = []
+        for i in range(matrix.shape[1]):
+            innerList = []
+            for j in range(matrix.shape[0]):
+                innerList.append(matrix.data[j][i])
+            newList.append(innerList)
+        return newList
 
     def __init__(self, data):
         if Matrix.isListOfLists(data):
@@ -82,13 +92,7 @@ class Matrix:
             raise ValueError
 
     def T(self):
-        newList = []
-        for i in range(self.shape[1]):
-            innerList = []
-            for j in range(self.shape[0]):
-                innerList.append(self.data[j][i])
-            newList.append(innerList)
-        return Matrix(newList)
+        return Matrix(Matrix.Tlist(self))
 
     # add & radd : only Matrixs of same shape.
     def __add__(self, other):
@@ -190,7 +194,7 @@ class Vector(Matrix):
     def __rsub__(self, other):
         return self.__sub__(other)
 
-    # truediv : only with scalars (to perform division of Matrix by a scalar).
+    # truediv : only with scalars (to perform division of Vector by a scalar).
     def __truediv__(self, num):
         if not isinstance(num, (int, float)):
             raise TypeError("wrong types")
@@ -217,6 +221,9 @@ class Vector(Matrix):
 
     def __rmul__(self, num):
         return self.__mul__(num)
+    
+    def T(self):
+        return Vector(Matrix.Tlist(self))
         
     def dot(self, other):
         if isinstance(other, Vector) and self.shape == other.shape:
