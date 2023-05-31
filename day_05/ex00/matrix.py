@@ -9,20 +9,67 @@ class Matrix:
             not isinstance(data[0][0], list)
     
     @staticmethod
-    def MMmutipy(first, other):
+    def MMmultipy(first, second):
         newList = []
-        m = first.shape[0]
-        n = first.shape[1]
-        p = other.shape[1]
-        for i in range(m):
+        for i in range(first.shape[0]):
             innerList = []
-            for j in range(p):
+            for j in range(second.shape[1]):
                 newEl = 0
-                for k in range(n):
-                    newEl += first.data[i][k] * other.data[k][j]
+                for k in range(first.shape[1]):
+                    newEl += first.data[i][k] * second.data[k][j]
                 innerList.append(newEl)
             newList.append(innerList)
-        return Matrix(newList)
+        return newList    
+
+    @staticmethod
+    def MSmultipy(first, second):
+        newList = []
+        for line in first.data:
+            innerList = []
+            for i in range(len(line)):
+                innerList.append(line[i] * second)
+            newList.append(innerList)
+        return newList
+    
+    @staticmethod
+    def MSdiv(matrix, num):
+        newList = []
+        for line in matrix.data:
+            innerList = []
+            for i in range(len(line)):
+                innerList.append(line[i] / num)
+            newList.append(innerList)
+        return newList
+    
+    @staticmethod
+    def SMdiv(matrix, num):
+        newList = []
+        for line in matrix.data:
+            innerList = []
+            for i in range(len(line)):
+                innerList.append(num / line[i])
+            newList.append(innerList)
+        return newList
+    
+    @staticmethod
+    def summ(first, second):
+        newList = []
+        for i in range(len(first.data)):
+            innerList = []
+            for j in range(len(first.data[i])):
+                innerList.append(first.data[i][j] + second.data[i][j])
+            newList.append(innerList)
+        return newList
+    
+    @staticmethod
+    def sub(first, second):
+        newList = []
+        for i in range(len(first.data)):
+            innerList = []
+            for j in range(len(first.data[i])):
+                innerList.append(first.data[i][j] - second.data[i][j])
+            newList.append(innerList)
+        return newList
 
     def __init__(self, data):
         if Matrix.isListOfLists(data):
@@ -46,13 +93,7 @@ class Matrix:
     # add & radd : only Matrixs of same shape.
     def __add__(self, other):
         if isinstance(other, Matrix) and self.shape == other.shape:
-            newList = []
-            for i in range(len(self.data)):
-                innerList = []
-                for j in range(len(self.data[i])):
-                    innerList.append(self.data[i][j] + other.data[i][j])
-                newList.append(innerList)
-            return Matrix(newList)
+            return Matrix(Matrix.summ(self, other))
         else:
             raise TypeError("wrong types")
 
@@ -62,13 +103,7 @@ class Matrix:
     # sub & rsub : only Matrixs of same shape.
     def __sub__(self, other):
         if isinstance(other, Matrix) and self.shape == other.shape:
-            newList = []
-            for i in range(len(self.data)):
-                innerList = []
-                for j in range(len(self.data[i])):
-                    innerList.append(self.data[i][j] - other.data[i][j])
-                newList.append(innerList)
-            return Matrix(newList)
+            return Matrix(Matrix.sub(self, other))
         else:
             raise TypeError("wrong types")
 
@@ -81,41 +116,23 @@ class Matrix:
             raise TypeError("wrong types")
         if num == 0:
             raise ZeroDivisionError
-        newList = []
-        for line in self.data:
-            innerList = []
-            for i in range(len(line)):
-                innerList.append(line[i] / num)
-            newList.append(innerList)
-        return Matrix(newList)
+        return Matrix(Matrix.MSdiv(self, num))
 
     def __rtruediv__(self, num):
         """Warning: can raise DivisionByZeroException"""
         if not isinstance(num, (int, float)):
             raise TypeError("wrong types")
-        newList = []
-        for line in self.data:
-            innerList = []
-            for i in range(len(line)):
-                innerList.append(num / line[i])
-            newList.append(innerList)
-        return Matrix(newList)
+        return Matrix(Matrix.SMdiv(self, num))
 
     # mul : scalars, vectors and matrices , can have errors with vectors and matrices,
     # returns a Vector if we perform Matrix * Vector mutliplication.
 
     def __mul__(self, other):
         if isinstance(other, (int, float)):
-            newList = []
-            for line in self.data:
-                innerList = []
-                for i in range(len(line)):
-                    innerList.append(line[i] * other)
-                newList.append(innerList)
-            return Matrix(newList)
+            return Matrix(Matrix.MSmultipy(self, other))
         elif isinstance(other, Matrix):
             if self.shape[1] == other.shape[0]:
-                return Matrix.MMmutipy(self, other)
+                return Matrix(Matrix.MMmultipy(self, other))
 
 
     def __rmul__(self, num):
@@ -125,7 +142,7 @@ class Matrix:
         return self.__str__()
 
     def __str__(self):
-        line = 'Matrix([' + ', '.join(self.data[k].__str__() for k in range(self.shape[0])) + ']]'
+        line = 'Matrix([' + ', '.join(self.data[k].__str__() for k in range(self.shape[0])) + '])'
         return line
 
 
@@ -137,11 +154,69 @@ class Vector(Matrix):
             (len(data) == 1 or len(data[0]) == 1)
     
     def __init__(self, data):
-        if Vector.isRowOrColumn(data):
+        if isinstance(data, Matrix):
+            if data.shape[0] == 1 or data.shape[1] == 1:
+                self.data = deepcopy(data.data)
+                self.shape = data.shape
+            else:
+                raise ValueError
+        elif Vector.isRowOrColumn(data):
             self.data = deepcopy(data)
             self.shape = (len(data), len(data[0]))
         else:
             raise ValueError
+        
+    def __str__(self):
+        line = 'Vector([' + ', '.join(self.data[k].__str__() for k in range(self.shape[0])) + '])'
+        return line
+    
+    # add & radd : only Vectors of same shape.
+    def __add__(self, other):
+        if isinstance(other, Vector) and self.shape == other.shape:
+            return Vector(Matrix.summ(self, other))
+        else:
+            raise TypeError("wrong types")
+
+    def __radd__(self, other):
+        return self.__add__(other)
+
+    # sub & rsub : only Vectors of same shape.
+    def __sub__(self, other):
+        if isinstance(other, Vector) and self.shape == other.shape:
+            return Vector(Matrix.sub(self, other))
+        else:
+            raise TypeError("wrong types")
+
+    def __rsub__(self, other):
+        return self.__sub__(other)
+
+    # truediv : only with scalars (to perform division of Matrix by a scalar).
+    def __truediv__(self, num):
+        if not isinstance(num, (int, float)):
+            raise TypeError("wrong types")
+        if num == 0:
+            raise ZeroDivisionError
+        return Vector(Matrix.MSdiv(self, num))
+
+    def __rtruediv__(self, num):
+        """Warning: can raise DivisionByZeroException"""
+        if not isinstance(num, (int, float)):
+            raise TypeError("wrong types")
+        return Vector(Matrix.SMdiv(self, num))
+
+    # mul : scalars, vectors and matrices , can have errors with vectors and matrices,
+    # returns a Vector if we perform Matrix * Vector mutliplication.
+
+    def __mul__(self, other):
+        if isinstance(other, (int, float)):
+            return Vector(Matrix.MSmultipy(self, other))
+        elif isinstance(other, Matrix):
+            if self.shape[1] == other.shape[0]:
+                return Vector(Matrix.MMmultipy(self, other))
+
+
+    def __rmul__(self, num):
+        return self.__mul__(num)
         
     def dot(self, other):
         if isinstance(other, Vector) and self.shape == other.shape:

@@ -21,4 +21,6 @@ if __name__ == "__main__":
     v2 = Vector([[1], [2], [3]]) # create a column vector
     print(v1)
     print(v2)
-    # v3 = Vector([[1, 2], [3, 4]])
+    v1 = Vector([[1], [2], [3]])
+    v2 = Vector([[2], [4], [8]])
+    print(v1 + v2)
