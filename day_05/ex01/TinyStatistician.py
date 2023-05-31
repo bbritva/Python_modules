@@ -39,7 +39,7 @@ class TinyStatistician:
     @_guard_
     def var(self, x):
         mean = self.mean(x)
-        return sum([(i - mean) ** 2 for i in x]) / len(x)
+        return sum([(i - mean) ** 2 for i in x]) / (len(x) - 1)
 
     @_guard_
     def std(self, x):
