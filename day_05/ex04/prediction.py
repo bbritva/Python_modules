@@ -13,8 +13,15 @@ def predict_(x, theta):
     Raises:
     This function should not raise any Exceptions.
     """
-    width = x.shape[0]
-    return np.c_[np.ones(width), x ].dot(theta)
+    try:
+        if theta.shape == (2,1) and len(x.shape) == 1:
+            width = x.shape[0]
+            return np.c_[np.ones(width), x ].dot(theta)
+        else:
+            return None
+    except:
+        return None
+
 
 x = np.arange(1,6)
 theta1 = np.array([[5], [0]])
