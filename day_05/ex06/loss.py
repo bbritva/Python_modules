@@ -1,5 +1,16 @@
 import numpy as np
 
+
+def _guard_(func):
+    def wrapper(*args, **kwargs):
+        try:
+            return(func(*args, **kwargs))
+        except:
+            return None
+    return wrapper
+
+
+@_guard_
 def predict_(x, theta):
     """Computes the vector of prediction y_hat from two non-empty numpy.array.
     Args:
@@ -13,16 +24,11 @@ def predict_(x, theta):
     Raises:
     This function should not raise any Exceptions.
     """
-    try:
-        if theta.shape in [(2,1), (2,)] and (len(x.shape) == 1 or x.shape[1] == 1):
-            width = x.shape[0]
-            return np.c_[np.ones(width), x ].dot(theta)
-        else:
-            return None
-    except:
-        return None
+    return np.c_[np.ones(x.shape[0]), x ].dot(theta)
 
 
+
+@_guard_
 def loss_elem_(y, y_hat):
     """
     Description:
@@ -40,6 +46,7 @@ def loss_elem_(y, y_hat):
     return (y - y_hat) ** 2
 
 
+@_guard_
 def loss_(y, y_hat):
     """
     Description:
