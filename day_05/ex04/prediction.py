@@ -14,7 +14,7 @@ def predict_(x, theta):
     This function should not raise any Exceptions.
     """
     try:
-        if theta.shape == (2,1) and len(x.shape) == 1:
+        if theta.shape in [(2,1), (2,)] and (len(x.shape) == 1 or x.shape[1] == 1):
             width = x.shape[0]
             return np.c_[np.ones(width), x ].dot(theta)
         else:
