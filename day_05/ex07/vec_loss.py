@@ -5,7 +5,8 @@ def _guard_(func):
     def wrapper(*args, **kwargs):
         try:
             return (func(*args, **kwargs))
-        except:
+        except Exception as e:
+            print(e)
             return None
     return wrapper
 
@@ -24,7 +25,7 @@ def loss_(y, y_hat):
     Raises:
     This function should not raise any Exceptions.
     """
-    return ((y - y_hat) ** 2).sum() / (2 * y.shape[0])
+    return float((y_hat - y).T.dot((y_hat - y))) / (2 * y.shape[0])
 
 
 X = np.array([[0], [15], [-9], [7], [12], [3], [-21]])
@@ -36,3 +37,4 @@ print(loss_(X, Y))
 # Example 2:
 print(loss_(X, X))
 # Output:
+0.0
