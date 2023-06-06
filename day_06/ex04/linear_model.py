@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from cycler import cycler
 
 
 def _guard_(func):
@@ -50,7 +51,7 @@ class MyLinearRegression():
     @staticmethod
     @_guard_
     def mse_(y, y_hat):
-        return float((y_hat - y).T.dot((y_hat - y))) / ( y.shape[0])
+        return float((y_hat - y).T.dot((y_hat - y))) / (y.shape[0])
 
 
 @_guard_
@@ -70,16 +71,25 @@ def plot_model(data, Y_model):
 @_guard_
 def plot_cost(x, y):
     amount = 100
-    thetas_1 = np.linspace(-15, 5, amount)
+    thetas_1 = np.linspace(-15, -3, amount)
+    thetas_0 = np.linspace(80, 100, 6)
     theta_0 = 89.0
     mlr = MyLinearRegression(np.array([[theta_0], [thetas_1[0]]]))
     cost = [0] * amount
-    for i, theta_1 in enumerate(thetas_1):
+    plt.figure(figsize=(10, 10))
+    plt.rcParams['axes.prop_cycle'] = cycler(
+        color=['#111111', '#333333', '#555555', '#777777', '#999999', '#BBBBBB'])
+
+    for j, theta_0 in enumerate(thetas_0):
+        mlr.thetas[0][0] = theta_0
+        for i, theta_1 in enumerate(thetas_1):
             mlr.thetas[1][0] = theta_1
             y_hat = mlr.predict_(x)
             cost[i] = mlr.loss_(y, y_hat)
-    plt.figure(figsize=(10, 6))
-    plt.plot(thetas_1, cost, label="S$_{predict}$(pills)")
+        plt.plot(thetas_1, cost, label=f"J$(\\theta_0=c_{j}, \\theta_1)$")
+    plt.xlabel("$\\theta_1$")
+    plt.ylabel("cost function J$(\\theta_0, \\theta_1)$")
+    plt.legend(loc='lower right')
     plt.ylim([10, 150])
     plt.grid()
     plt.show()
@@ -104,4 +114,3 @@ print(MyLinearRegression.mse_(Yscore, Y_model2))
 # plot_model(data, Y_model1)
 # plot_model(data, Y_model2)
 plot_cost(Xpill, Yscore)
-
