@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 
 
 def _guard_(func):
@@ -51,6 +52,16 @@ class MyLinearRegression():
     def mse_(y, y_hat):
         return ((y - y_hat) ** 2).sum() / (y.shape[0])
 
+@_guard_
+def plot_model(data, Y_model):
+    plt.figure(figsize=(10,6))
+    plt.plot(data["Micrograms"], Y_model, "--", c='lime', label="S$_{predict}$(pills)")
+    plt.scatter(data["Micrograms"], Y_model, marker='x', c='lime')
+    plt.scatter(data["Micrograms"], data["Score"], marker='o', c='cyan', label="S$_{true}$(pills)")
+    plt.legend(bbox_to_anchor=(0, 1, 1, 0), loc="lower left", ncol=2, frameon=False)
+    plt.grid()
+    plt.show()
+
 
 try:
     data = pd.read_csv("are_blue_pills_magic.csv")
@@ -61,8 +72,10 @@ try:
     Y_model1 = linear_model1.predict_(Xpill)
     Y_model2 = linear_model2.predict_(Xpill)
     print(MyLinearRegression.mse_(Yscore, Y_model1))
-    # 57.60304285714282
+    # 57.603042857142825
     print(MyLinearRegression.mse_(Yscore, Y_model2))
     # 232.16344285714285
+    plot_model(data, Y_model1)
+    plot_model(data, Y_model2)
 except Exception as e:
     print("Error:", e)
