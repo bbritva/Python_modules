@@ -111,6 +111,6 @@ print(MyLinearRegression.mse_(Yscore, Y_model1))
 # 57.603042857142825
 print(MyLinearRegression.mse_(Yscore, Y_model2))
 # 232.16344285714285
-# plot_model(data, Y_model1)
-# plot_model(data, Y_model2)
+plot_model(data, Y_model1)
+plot_model(data, Y_model2)
 plot_cost(Xpill, Yscore)
