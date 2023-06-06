@@ -14,8 +14,14 @@ def simple_predict(x, theta):
     This function should not raise any Exception.
     """
     try:
-        return np.c_[np.ones(x.shape[0]), x ].dot(theta)
-    except:
+        res = np.zeros((x.shape[0], 1))
+        for i in range(x.shape[0]):
+            res[i] = theta[0]
+            for j in range(x.shape[1]):
+                res[i] += theta[j + 1] * x[i][j]
+        return res.astype(np.float64)
+    except Exception as e:
+        print(e)
         return None
 
 
