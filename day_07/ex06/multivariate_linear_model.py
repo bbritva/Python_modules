@@ -53,6 +53,8 @@ class MyLinearRegression():
     @staticmethod
     @_guard_
     def mse_(y, y_hat):
+        dot_res = (y_hat - y).T.dot((y_hat - y))
+        print(dot_res)
         return float((y_hat - y).T.dot((y_hat - y))) / (y.shape[0])
 
 
@@ -88,11 +90,11 @@ except FileNotFoundError:
     data = pd.read_csv("../resources/spacecraft_data.csv")
 except FileNotFoundError:
     exit()
-univar_processing(data, "Age", 0.01, thetas=np.array([[500.], [0.]]))
-univar_processing(data, "Thrust_power", 0.0001,
-                  thetas=np.array([[0.0], [4.0]]))
-univar_processing(data, "Terameters", 0.0002,
-                  thetas=np.array([[700.0], [-1.0]]))
+# univar_processing(data, "Age", 0.01, thetas=np.array([[500.], [0.]]))
+# univar_processing(data, "Thrust_power", 0.0001,
+#                   thetas=np.array([[0.0], [4.0]]))
+# univar_processing(data, "Terameters", 0.0002,
+#                   thetas=np.array([[700.0], [-1.0]]))
 
 # X = np.array(data[['Age']])
 # Y = np.array(data[['Sell_price']])
@@ -100,3 +102,20 @@ univar_processing(data, "Terameters", 0.0002,
 # myLR_age.fit_(X[:,0].reshape(-1,1), Y)
 # y_pred = myLR_age.predict_(X[:,0].reshape(-1,1))
 # print(myLR_age.mse_(y_pred,Y))
+
+X = np.array(data[['Age','Thrust_power','Terameters']])
+Y = np.array(data[['Sell_price']])
+my_lreg = MyLinearRegression(thetas = [1.0, 1.0, 1.0, 1.0], alpha = 1e-4, max_iter = 600000)
+# Example 0:
+print(my_lreg.mse_(Y, my_lreg.predict_(X).reshape((-1,1))))
+# Output:
+# 144044.877...
+# Example 1:
+my_lreg.fit_(X,Y)
+print(my_lreg.thetas)
+# Output:
+# array([[334.994...],[-22.535...],[5.857...],[-2.586...]])
+# Example 2:
+print(my_lreg.mse_(Y, my_lreg.predict_(X)))
+# Output:
+# 586.896999...
