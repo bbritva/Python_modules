@@ -22,7 +22,7 @@ class MyLinearRegression():
     My personnal linear regression class to fit like a boss.
     """
     @_guard_
-    def __init__(self, thetas, alpha=0.01, max_iter=10000):
+    def __init__(self, thetas, alpha=0.01, max_iter=100000):
         self.alpha = alpha
         self.max_iter = max_iter
         self.thetas = thetas
@@ -69,33 +69,6 @@ def plot_model(data, Y_model, feature):
 
 
 @_guard_
-def plot_cost(x, y):
-    amount = 100
-    thetas_1 = np.linspace(-15, -3, amount)
-    thetas_0 = np.linspace(80, 100, 6)
-    theta_0 = 89.0
-    mlr = MyLinearRegression(np.array([[theta_0], [thetas_1[0]]]))
-    cost = [0] * amount
-    plt.figure(figsize=(10, 10))
-    plt.rcParams['axes.prop_cycle'] = cycler(
-        color=['#111111', '#333333', '#555555', '#777777', '#999999', '#BBBBBB'])
-
-    for j, theta_0 in enumerate(thetas_0):
-        mlr.thetas[0][0] = theta_0
-        for i, theta_1 in enumerate(thetas_1):
-            mlr.thetas[1][0] = theta_1
-            y_hat = mlr.predict_(x)
-            cost[i] = mlr.loss_(y, y_hat)
-        plt.plot(thetas_1, cost, label=f"J$(\\theta_0=c_{j}, \\theta_1)$")
-    plt.xlabel("$\\theta_1$")
-    plt.ylabel("cost function J$(\\theta_0, \\theta_1)$")
-    plt.legend()
-    plt.ylim([10, 150])
-    plt.grid()
-    plt.show()
-
-
-@_guard_
 def univar_processing(data, feature, alpha, thetas=np.array([[0.0], [0.0]])):
     X = np.array(data[feature]).reshape(-1, 1)
     Y = np.array(data[target]).reshape(-1, 1)
@@ -120,3 +93,10 @@ univar_processing(data, "Thrust_power", 0.0001,
                   thetas=np.array([[0.0], [4.0]]))
 univar_processing(data, "Terameters", 0.0002,
                   thetas=np.array([[700.0], [-1.0]]))
+
+# X = np.array(data[['Age']])
+# Y = np.array(data[['Sell_price']])
+# myLR_age = MyLinearRegression(thetas = [[1000.0], [-1.0]], alpha = 2.5e-5, max_iter = 100000)
+# myLR_age.fit_(X[:,0].reshape(-1,1), Y)
+# y_pred = myLR_age.predict_(X[:,0].reshape(-1,1))
+# print(myLR_age.mse_(y_pred,Y))
