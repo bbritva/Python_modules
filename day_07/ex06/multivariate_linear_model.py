@@ -57,15 +57,12 @@ class MyLinearRegression():
 
 
 @_guard_
-def plot_model(data, Y_model, feature="Age"):
-    plt.figure(figsize=(10, 6))
-    plt.plot(data[feature], Y_model, "--",
-             c='lime', label="S$_{predict}$(pills)")
-    plt.scatter(data[feature], Y_model, marker='x', c='lime')
+def plot_model(data, Y_model, feature):
+    plt.scatter(data[feature], Y_model, marker='.',
+                c='cornflowerblue', label="Predicted price")
     plt.scatter(data[feature], data[target], marker='o',
-                c='cyan', label="S$_{true}$(pills)")
-    plt.legend(bbox_to_anchor=(0, 1, 1, 0),
-               loc="lower left", ncol=2, frameon=False)
+                c='darkblue', label="Sell price")
+    plt.legend(loc='lower left')
     plt.grid()
     plt.show()
 
@@ -91,23 +88,25 @@ def plot_cost(x, y):
         plt.plot(thetas_1, cost, label=f"J$(\\theta_0=c_{j}, \\theta_1)$")
     plt.xlabel("$\\theta_1$")
     plt.ylabel("cost function J$(\\theta_0, \\theta_1)$")
-    plt.legend(loc='lower right')
+    plt.legend()
     plt.ylim([10, 150])
     plt.grid()
     plt.show()
 
 
-
 @_guard_
-def univar_processing(data, feature):
-    Xage = np.array(data[feature]).reshape(-1, 1)
-    Yscore = np.array(data[target]).reshape(-1, 1)
-    mlr = MyLinearRegression(np.array([[0.0], [0.0]]))
-    model_before = mlr.predict_(Xage)
-    mlr.fit_(Xage, Yscore)
-    model_after = mlr.predict_(Xage)
+def univar_processing(data, feature, alpha):
+    X = np.array(data[feature]).reshape(-1, 1)
+    Y = np.array(data[target]).reshape(-1, 1)
+    mlr = MyLinearRegression(np.array([[0.0], [0.0]]), alpha=alpha)
+    model_before = mlr.predict_(X)
+    mlr.fit_(X, Y)
+    model_after = mlr.predict_(X)
     plot_model(data, model_before, feature)
     plot_model(data, model_after, feature)
+    print("Thetas:", mlr.thetas)
+    print("MSE = ", mlr.mse_(Y, mlr.predict_(X)))
+
 
 try:
     data = pd.read_csv("day_07/resources/spacecraft_data.csv")
@@ -115,4 +114,5 @@ except FileNotFoundError:
     data = pd.read_csv("../resources/spacecraft_data.csv")
 except FileNotFoundError:
     exit()
-univar_processing(data, "Age")
+univar_processing(data, "Age", 0.01)
+univar_processing(data, "Thrust_power", 0.0001)
