@@ -58,11 +58,12 @@ class MyLinearRegression():
 
 @_guard_
 def plot_model(data, Y_model, feature):
+    plt.title(feature)
     plt.scatter(data[feature], Y_model, marker='.',
                 c='cornflowerblue', label="Predicted price")
     plt.scatter(data[feature], data[target], marker='o',
                 c='darkblue', label="Sell price")
-    plt.legend(loc='lower left')
+    plt.legend(loc='lower right')
     plt.grid()
     plt.show()
 
@@ -95,10 +96,10 @@ def plot_cost(x, y):
 
 
 @_guard_
-def univar_processing(data, feature, alpha):
+def univar_processing(data, feature, alpha, thetas=np.array([[0.0], [0.0]])):
     X = np.array(data[feature]).reshape(-1, 1)
     Y = np.array(data[target]).reshape(-1, 1)
-    mlr = MyLinearRegression(np.array([[0.0], [0.0]]), alpha=alpha)
+    mlr = MyLinearRegression(thetas, alpha=alpha)
     model_before = mlr.predict_(X)
     mlr.fit_(X, Y)
     model_after = mlr.predict_(X)
@@ -114,5 +115,8 @@ except FileNotFoundError:
     data = pd.read_csv("../resources/spacecraft_data.csv")
 except FileNotFoundError:
     exit()
-univar_processing(data, "Age", 0.01)
-univar_processing(data, "Thrust_power", 0.0001)
+univar_processing(data, "Age", 0.01, thetas=np.array([[500.], [0.]]))
+univar_processing(data, "Thrust_power", 0.0001,
+                  thetas=np.array([[0.0], [4.0]]))
+univar_processing(data, "Terameters", 0.0002,
+                  thetas=np.array([[700.0], [-1.0]]))
