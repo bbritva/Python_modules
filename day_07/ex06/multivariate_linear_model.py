@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from cycler import cycler
 
 target = "Sell_price"
 
@@ -53,8 +52,6 @@ class MyLinearRegression():
     @staticmethod
     @_guard_
     def mse_(y, y_hat):
-        dot_res = (y_hat - y).T.dot((y_hat - y))
-        print(dot_res)
         return float((y_hat - y).T.dot((y_hat - y))) / (y.shape[0])
 
 
@@ -102,12 +99,14 @@ except FileNotFoundError:
 # myLR_age.fit_(X[:,0].reshape(-1,1), Y)
 # y_pred = myLR_age.predict_(X[:,0].reshape(-1,1))
 # print(myLR_age.mse_(y_pred,Y))
-
+np.seterr(all='raise')
 X = np.array(data[['Age','Thrust_power','Terameters']])
 Y = np.array(data[['Sell_price']])
-my_lreg = MyLinearRegression(thetas = [1.0, 1.0, 1.0, 1.0], alpha = 1e-4, max_iter = 600000)
+my_lreg = MyLinearRegression(thetas = np.array([[1.0], [1.0], [1.0], [1.0]]), alpha = 5e-5, max_iter = 600000)
 # Example 0:
-print(my_lreg.mse_(Y, my_lreg.predict_(X).reshape((-1,1))))
+# print(X)
+y_hat = my_lreg.predict_(X)
+print(my_lreg.mse_(Y, y_hat))
 # Output:
 # 144044.877...
 # Example 1:
