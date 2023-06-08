@@ -58,10 +58,10 @@ class MyLinearRegression():
 @_guard_
 def plot_model(data, Y_model, feature):
     plt.title(feature)
-    plt.scatter(data[feature], Y_model, marker='.',
-                c='cornflowerblue', label="Predicted price")
     plt.scatter(data[feature], data[target], marker='o',
                 c='darkblue', label="Sell price")
+    plt.scatter(data[feature], Y_model, marker='.',
+                c='cornflowerblue', label="Predicted price")
     plt.legend(loc='lower right')
     plt.grid()
     plt.show()
@@ -87,24 +87,22 @@ except FileNotFoundError:
     data = pd.read_csv("../resources/spacecraft_data.csv")
 except FileNotFoundError:
     exit()
-# univar_processing(data, "Age", 0.01, thetas=np.array([[500.], [0.]]))
-# univar_processing(data, "Thrust_power", 0.0001,
-#                   thetas=np.array([[0.0], [4.0]]))
-# univar_processing(data, "Terameters", 0.0002,
-#                   thetas=np.array([[700.0], [-1.0]]))
+univar_processing(data, "Age", 0.01, thetas=np.array([[500.], [0.]]))
+univar_processing(data, "Thrust_power", 0.0001,
+                  thetas=np.array([[0.0], [4.0]]))
+univar_processing(data, "Terameters", 0.0002,
+                  thetas=np.array([[700.0], [-1.0]]))
 
-# X = np.array(data[['Age']])
-# Y = np.array(data[['Sell_price']])
-# myLR_age = MyLinearRegression(thetas = [[1000.0], [-1.0]], alpha = 2.5e-5, max_iter = 100000)
-# myLR_age.fit_(X[:,0].reshape(-1,1), Y)
-# y_pred = myLR_age.predict_(X[:,0].reshape(-1,1))
-# print(myLR_age.mse_(y_pred,Y))
-np.seterr(all='raise')
+X = np.array(data[['Age']])
+Y = np.array(data[['Sell_price']])
+myLR_age = MyLinearRegression(thetas = [[1000.0], [-1.0]], alpha = 2.5e-5, max_iter = 100000)
+myLR_age.fit_(X[:,0].reshape(-1,1), Y)
+y_pred = myLR_age.predict_(X[:,0].reshape(-1,1))
+print(myLR_age.mse_(y_pred,Y))
 X = np.array(data[['Age','Thrust_power','Terameters']])
 Y = np.array(data[['Sell_price']])
 my_lreg = MyLinearRegression(thetas = np.array([[1.0], [1.0], [1.0], [1.0]]), alpha = 5e-5, max_iter = 600000)
 # Example 0:
-# print(X)
 y_hat = my_lreg.predict_(X)
 print(my_lreg.mse_(Y, y_hat))
 # Output:
@@ -118,3 +116,6 @@ print(my_lreg.thetas)
 print(my_lreg.mse_(Y, my_lreg.predict_(X)))
 # Output:
 # 586.896999...
+plot_model(data, my_lreg.predict_(X), "Age")
+plot_model(data, my_lreg.predict_(X), "Thrust_power")
+plot_model(data, my_lreg.predict_(X), "Terameters")
