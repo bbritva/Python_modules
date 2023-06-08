@@ -1,32 +1,43 @@
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
-x = np.arange(1,11).reshape(-1,1).astype(np.float64)
-y = np.array([[ 1.39270298],
-[ 3.88237651],
-[ 4.37726357],
-[ 4.63389049],
-[ 7.79814439],
-[ 6.41717461],
-[ 8.63429886],
-[ 8.19939795],
-[10.37567392],
-[10.68238222]])
-# plt.scatter(x,y)
-# plt.grid()
-# plt.show()
 
 from polynomial_model import add_polynomial_features
 from mylinearregression import MyLinearRegression as MyLR
-# Build the model:
-x_ = add_polynomial_features(x, 3)
-my_lr = MyLR(np.ones(4).reshape(-1,1), 1e-6, 100000)
-my_lr.fit_(x_, y)
-print(my_lr.thetas)
-# Plot:
-## To get a smooth curve, we need a lot of data points
-continuous_x = np.arange(1,10.01, 0.01).reshape(-1,1)
-x_ = add_polynomial_features(continuous_x, 3)
-y_hat = my_lr.predict_(x_)
-plt.scatter(x,y)
-plt.plot(continuous_x, y_hat, color='orange')
-plt.show()
+
+
+def do_process(thetas, data, alpha=1e-4, max_iter=1e5):
+    mlr = MyLR(thetas, alpha, max_iter)
+    x = np.array(data["Micrograms"]).reshape(-1, 1)
+    x_ = add_polynomial_features(x, len(thetas) - 1)
+    y = np.array(data["Score"]).reshape(-1, 1)
+    mlr.fit_(x_, y)
+    print(mlr.thetas)
+    continuous_x = np.arange(1, 7.0, 0.1).reshape(-1, 1)
+    continuous_x_ = add_polynomial_features(continuous_x, len(thetas) - 1)
+    y_hat = mlr.predict_(continuous_x_)
+    plt.scatter(x, y)
+    plt.plot(continuous_x, y_hat, color='orange')
+    plt.grid()
+    plt.show()
+
+
+try:
+    data = pd.read_csv("day_07/resources/are_blue_pills_magics.csv")
+except FileNotFoundError:
+    data = pd.read_csv("../resources/are_blue_pills_magics.csv")
+except FileNotFoundError:
+    exit()
+
+theta1 = np.array([[80.], [-7.]])
+theta2 = np.array([[85.], [-7.], [-0.2]])
+theta3 = np.array([[87.], [-5.], [-1.5], [0.15]])
+theta4 = np.array([[-20], [160], [-80], [14], [-1]])
+theta5 = np.array([[1140], [-1850], [1110], [-305], [40], [-2]])
+theta6 = np.array([[9110], [-18015], [13400], [-4935], [966], [-96.4], [3.86]])
+do_process(theta1, data)
+do_process(theta2, data)
+do_process(theta3, data, 1e-6, 1000000)
+do_process(theta4, data, 1e-6, 1000000)
+do_process(theta5, data, 1e-8, 1000000)
+do_process(theta6, data, 1e-9, 1000000)

@@ -5,7 +5,9 @@ def _guard_(func):
         try:
             return (func(*args, **kwargs))
         except Exception as e:
-            print(e)
+            print("Error:", func.__name__,e)
+            print(args
+            )
             return None
     return wrapper
 
