@@ -18,7 +18,13 @@ def data_spliter(x, y, proportion):
     Raises:
     This function should not raise any Exception.
     """
-    pass
+    try:
+        res = np.c_[x, y]
+        np.random.shuffle(res)
+        limit = int(proportion * x.shape[0])
+        return res[:limit,:-1], res[limit:,:-1], res[:limit,-1:], res[limit:,-1:]
+    except:
+        return None
 
 x1 = np.array([1, 42, 300, 10, 59]).reshape((-1, 1))
 y = np.array([0, 1, 0, 1, 0]).reshape((-1, 1))
