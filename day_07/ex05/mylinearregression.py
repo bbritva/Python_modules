@@ -18,7 +18,7 @@ class MyLinearRegression():
     @_guard_
     def __init__(self, thetas, alpha=0.001, max_iter=1000):
         self.alpha = alpha
-        self.max_iter = max_iter
+        self.max_iter = int(max_iter)
         self.thetas = thetas
 
     @_guard_
