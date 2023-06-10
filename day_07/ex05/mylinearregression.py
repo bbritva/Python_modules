@@ -6,8 +6,7 @@ def _guard_(func):
             return (func(*args, **kwargs))
         except Exception as e:
             print("Error:", func.__name__,e)
-            print(args
-            )
+            print(args)
             return None
     return wrapper
 
@@ -45,3 +44,8 @@ class MyLinearRegression():
     @_guard_
     def loss_elem_(self, y, y_hat):
         return (y - y_hat) ** 2
+
+    @staticmethod
+    @_guard_
+    def mse_(y, y_hat):
+        return float((y_hat - y).T.dot((y_hat - y))) / (y.shape[0])
