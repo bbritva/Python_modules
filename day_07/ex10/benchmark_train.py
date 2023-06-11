@@ -10,12 +10,14 @@ from data_spliter import data_spliter
 filename = "space_avocado.csv"
 
 
-def plot_model(X, Y, Y_model, feature):
+def plot_model(X, Y, Y_hat, Y_had_base, feature):
     plt.title(feature)
     plt.scatter(X, Y, marker='o',
                 c='darkblue', label="Sell price", alpha=0.01)
-    plt.scatter(X, Y_model, marker='.',
-                c='cornflowerblue', label="Predicted price", alpha=0.01)
+    plt.scatter(X, Y_hat, marker='.',
+                c='red', label="Prediction learned")
+    plt.scatter(X, Y_had_base, marker='.',
+                c='blue', label="Prediction base")
     plt.legend(loc='lower right')
     plt.grid()
     plt.show()
@@ -29,10 +31,10 @@ def univar_processing(data, Y, feature, alpha, thetas=np.array([[0.0], [0.0]]), 
     model_before = mlr.predict_(X)
     mlr.fit_(X, Y)
     model_after = mlr.predict_(X)
-    plot_model(X, Y, model_before, feature)
-    plot_model(X, Y, model_after, feature)
+    plot_model(X, Y, model_after, model_before, feature)
     print("Thetas:", mlr.thetas)
     print("MSE = ", mlr.mse_(Y, mlr.predict_(X)))
+    return max_X
 
 
 try:
@@ -45,11 +47,12 @@ except FileNotFoundError:
 y = np.array(data[["target"]]).reshape((-1, 1))
 # x_train, x_test, y_train, y_test = data_spliter(x, y, 0.8)
 # print(min(data['weight']), max(data['weight']))
-# univar_processing(data,y, "weight", 0.0001, thetas=np.array([[400000.], [3000.]]))
-univar_processing(data, y, "prod_distance", 1e-4,
-                thetas=np.array([[4e5], [2e-5]]), max_iter=1e5)
-# univar_processing(data, "time_delivery", 0.01,
-#                 thetas=np.array([[6e+05], [-100.0]]), max_iter=1e5)
+max_weight = univar_processing(data, y, "weight", 1e-1,
+                  thetas=np.array([[6e5], [2e5]]))
+max_dist = univar_processing(data, y, "prod_distance", 1e-1,
+                  thetas=np.array([[6e5], [-2e4]]))
+max_time = univar_processing(data, y, "time_delivery", 1e-1,
+                  thetas=np.array([[6e5], [-2e3]]))
 
 
 # theta1 = np.array([[30000.], [4909.], [173.], [6000.]])
