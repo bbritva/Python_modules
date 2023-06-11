@@ -23,19 +23,20 @@ def plot_model(X, Y, Y_hat, Y_had_base, feature):
     plt.show()
 
 
-def univar_processing(X, Y, feature, alpha, thetas=np.array([[0.0], [0.0]]), max_iter=1e5):
+def univar_processing(data, feature, alpha, thetas=np.array([[0.0], [0.0]]), max_iter=1e5):
     mlr = MyLR(thetas, alpha=alpha, max_iter=max_iter)
-    model_before = mlr.predict_(X)
-    mlr.fit_(X, Y)
-    model_after = mlr.predict_(X)
-    plot_model(X, Y, model_after, model_before, feature)
+    model_before = mlr.predict_(data['x_test'])
+    mlr.fit_(data['x_train'], data['y_train'])
+    model_after = mlr.predict_(data['x_test'])
+    plot_model(data['x_test'], data['y_test'],
+               model_after, model_before, feature)
     print("Thetas:", mlr.thetas)
-    print("MSE = ", mlr.mse_(Y, mlr.predict_(X)))
+    print("MSE = ", mlr.mse_(data['y_test'], model_after))
 
-def norm_data(data, feature):
-    X = np.array(data[feature])
-    x_max = max(X)
-    return X / x_max, x_max
+
+def norm_data(x):
+    x_max = max(x)
+    return x / x_max, x_max
 
 
 try:
@@ -44,27 +45,39 @@ except FileNotFoundError:
     data = pd.read_csv("../resources/" + filename)
 except FileNotFoundError:
     exit()
-x_w, max_weight = norm_data(data, "weight")
-x_d, max_dist = norm_data(data, "prod_distance")
-x_t, max_time = norm_data(data, "time_delivery")
-y = np.array(data[["target"]]).reshape((-1, 1))
-# x_train, x_test, y_train, y_test = data_spliter(x, y, 0.8)
-# print(min(data['weight']), max(data['weight']))
-# univar_processing(x_w, y, "weight", 1e-1,
-#                   thetas=np.array([[6e5], [2e5]]))
-# univar_processing(x_d, y, "prod_distance", 1e-1,
-#                   thetas=np.array([[6e5], [-2e4]]))
-# univar_processing(x_t, y, "time_delivery", 1e-1,
-#                   thetas=np.array([[6e5], [-2e3]]))
+x_train, x_test, y_train, y_test = data_spliter(
+    data[["weight", "prod_distance", "time_delivery"]], data[["target"]], 0.8)
+x_w, max_weight = norm_data(x_train[:, 0])
+w_data = {"x_train": x_w, "x_test": x_test[:,0] / max_weight,
+          "y_train": y_train, "y_test": y_test, "x_max": max_weight}
 
+x_d, max_dist = norm_data(x_train[:,1])
+d_data = {"x_train": x_d, "x_test": x_test[:,1] / max_dist,
+          "y_train": y_train, "y_test": y_test, "x_max": max_dist}
+
+x_t, max_time = norm_data(x_train[:,2])
+t_data = {"x_train": x_t, "x_test": x_test[:,2] / max_time,
+          "y_train": y_train, "y_test": y_test, "x_max": max_time}
+          
+univar_processing(w_data, "weight", 1e-1,
+                  thetas=np.array([[6e5], [2e5]]))
+univar_processing(d_data, "prod_distance", 1e-1,
+                  thetas=np.array([[6e5], [2e4]]))
+univar_processing(t_data, "time_delivery", 1e-1,
+                  thetas=np.array([[6e5], [-2e3]]))
+exit()
 X_mult = np.c_[x_w, x_d, x_t]
-my_lreg = MyLR(thetas = np.array([[5e5], [3e5], [-2.8e4], [-2e3]]), alpha = 1e-1, max_iter=1e5)
+my_lreg = MyLR(thetas=np.array(
+    [[5e5], [3e5], [-2.8e4], [-2e3]]), alpha=1e-1, max_iter=1e5)
 y_hat_base = my_lreg.predict_(X_mult)
-my_lreg.fit_(X_mult,y)
+my_lreg.fit_(X_mult, y)
+y_hat = my_lreg.predict_(X_mult)
 print(my_lreg.thetas)
-plot_model(x_w, y, my_lreg.predict_(X_mult), y_hat_base, "weight")
-plot_model(x_d, y, my_lreg.predict_(X_mult), y_hat_base, "prod_distance")
-plot_model(x_t, y, my_lreg.predict_(X_mult), y_hat_base, "time_delivery")
+print("MSE =", my_lreg.mse_(y, y_hat))
+
+plot_model(x_w, y, y_hat, y_hat_base, "weight")
+plot_model(x_d, y, y_hat, y_hat_base, "prod_distance")
+plot_model(x_t, y, y_hat, y_hat_base, "time_delivery")
 
 
 # # theta1 = np.array([[30000.], [4909.], [173.], [6000.]])
