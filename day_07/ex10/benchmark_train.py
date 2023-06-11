@@ -8,6 +8,7 @@ from data_spliter import data_spliter
 
 # filename = "small.csv"
 filename = "space_avocado.csv"
+features = ["weight", "prod_distance", "time_delivery"]
 
 
 def plot_model(X, Y, Y_hat, Y_had_base, feature):
@@ -47,24 +48,33 @@ except FileNotFoundError:
     exit()
 x_train, x_test, y_train, y_test = data_spliter(
     data[["weight", "prod_distance", "time_delivery"]], data[["target"]], 0.8)
-x_w, max_weight = norm_data(x_train[:, 0])
-w_data = {"x_train": x_w, "x_test": x_test[:,0] / max_weight,
-          "y_train": y_train, "y_test": y_test, "x_max": max_weight}
 
-x_d, max_dist = norm_data(x_train[:,1])
-d_data = {"x_train": x_d, "x_test": x_test[:,1] / max_dist,
-          "y_train": y_train, "y_test": y_test, "x_max": max_dist}
-
-x_t, max_time = norm_data(x_train[:,2])
-t_data = {"x_train": x_t, "x_test": x_test[:,2] / max_time,
-          "y_train": y_train, "y_test": y_test, "x_max": max_time}
-          
-univar_processing(w_data, "weight", 1e-1,
+for i in range(3):
+    x, max_x = norm_data(x_train[:, i])
+    prepared_data = {"x_train": x, "x_test": x_test[:,i] / max_x,
+            "y_train": y_train, "y_test": y_test, "x_max": max_x}
+    univar_processing(prepared_data, features[i], 1e-1,
                   thetas=np.array([[6e5], [2e5]]))
-univar_processing(d_data, "prod_distance", 1e-1,
-                  thetas=np.array([[6e5], [2e4]]))
-univar_processing(t_data, "time_delivery", 1e-1,
-                  thetas=np.array([[6e5], [-2e3]]))
+    
+
+# x_w, max_weight = norm_data(x_train[:, 0])
+# w_data = {"x_train": x_w, "x_test": x_test[:,0] / max_weight,
+#           "y_train": y_train, "y_test": y_test, "x_max": max_weight}
+
+# x_d, max_dist = norm_data(x_train[:,1])
+# d_data = {"x_train": x_d, "x_test": x_test[:,1] / max_dist,
+#           "y_train": y_train, "y_test": y_test, "x_max": max_dist}
+
+# x_t, max_time = norm_data(x_train[:,2])
+# t_data = {"x_train": x_t, "x_test": x_test[:,2] / max_time,
+#           "y_train": y_train, "y_test": y_test, "x_max": max_time}
+
+# univar_processing(w_data, "weight", 1e-1,
+#                   thetas=np.array([[6e5], [2e5]]))
+# univar_processing(d_data, "prod_distance", 1e-1,
+#                   thetas=np.array([[6e5], [2e4]]))
+# univar_processing(t_data, "time_delivery", 1e-1,
+#                   thetas=np.array([[6e5], [-2e3]]))
 exit()
 X_mult = np.c_[x_w, x_d, x_t]
 my_lreg = MyLR(thetas=np.array(
