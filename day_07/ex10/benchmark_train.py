@@ -10,44 +10,29 @@ from data_spliter import data_spliter
 filename = "space_avocado.csv"
 
 
-def plot_model(data, Y_model, feature):
+def plot_model(X, Y, Y_model, feature):
     plt.title(feature)
-    plt.scatter(data[feature], data["target"], marker='o',
-                c='darkblue', label="Sell price")
-    plt.scatter(data[feature], Y_model, marker='.',
-                c='cornflowerblue', label="Predicted price")
+    plt.scatter(X, Y, marker='o',
+                c='darkblue', label="Sell price", alpha=0.01)
+    plt.scatter(X, Y_model, marker='.',
+                c='cornflowerblue', label="Predicted price", alpha=0.01)
     plt.legend(loc='lower right')
     plt.grid()
     plt.show()
 
 
-def univar_processing(data, feature, alpha, thetas=np.array([[0.0], [0.0]])):
+def univar_processing(data, Y, feature, alpha, thetas=np.array([[0.0], [0.0]]), max_iter=1e5):
     X = np.array(data[feature]).reshape(-1, 1)
-    Y = np.array(data["target"]).reshape(-1, 1)
-    print(np.unique(X))
-    mlr = MyLR(thetas, alpha=alpha)
+    mlr = MyLR(thetas, alpha=alpha, max_iter=max_iter)
+    max_X = max(X)
+    X = X / max_X
     model_before = mlr.predict_(X)
     mlr.fit_(X, Y)
     model_after = mlr.predict_(X)
-    plot_model(data, model_before, feature)
-    plot_model(data, model_after, feature)
+    plot_model(X, Y, model_before, feature)
+    plot_model(X, Y, model_after, feature)
     print("Thetas:", mlr.thetas)
     print("MSE = ", mlr.mse_(Y, mlr.predict_(X)))
-
-
-def do_process(thetas, x_train, x_test, y_train, y_test, alpha=2e-7, max_iter=1e5):
-    mlr = MyLR(thetas, alpha, max_iter)
-    # x_ = add_polynomial_features(x_train, len(thetas) - 1)
-    x_ = x
-    mlr.fit_(x_, y)
-    print(mlr.thetas)
-    # continuous_x = np.arange(1, 7.0, 0.1).reshape(-1, 1)
-    # continuous_x_ = add_polynomial_features(continuous_x, len(thetas) - 1)
-    # y_hat = mlr.predict_(continuous_x_)
-    # plt.scatter(x, y)
-    # plt.plot(continuous_x, y_hat, color='orange')
-    # plt.grid()
-    # plt.show()
 
 
 try:
@@ -57,14 +42,14 @@ except FileNotFoundError:
 except FileNotFoundError:
     exit()
 # x = np.array(data[["weight","prod_distance","time_delivery"]])
-# y = np.array(data[["target"]])
+y = np.array(data[["target"]]).reshape((-1, 1))
 # x_train, x_test, y_train, y_test = data_spliter(x, y, 0.8)
-
-univar_processing(data, "weight", 0.0001, thetas=np.array([[500000.], [4000.]]))
-# univar_processing(data, "prod_distance", 0.0001,
-#                 thetas=np.array([[0.0], [4.0]]))
-# univar_processing(data, "time_delivery", 0.0002,
-#                 thetas=np.array([[700.0], [-1.0]]))
+# print(min(data['weight']), max(data['weight']))
+# univar_processing(data,y, "weight", 0.0001, thetas=np.array([[400000.], [3000.]]))
+univar_processing(data, y, "prod_distance", 1e-4,
+                thetas=np.array([[4e5], [2e-5]]), max_iter=1e5)
+# univar_processing(data, "time_delivery", 0.01,
+#                 thetas=np.array([[6e+05], [-100.0]]), max_iter=1e5)
 
 
 # theta1 = np.array([[30000.], [4909.], [173.], [6000.]])

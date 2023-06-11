@@ -34,7 +34,9 @@ class MyLinearRegression():
     @_guard_
     def fit_(self, x, y):
         for i in range(self.max_iter):
-            self.thetas = self.thetas - self.alpha * self.gradient(x, y)
+            gr = self.gradient(x, y)
+            # print(gr)
+            self.thetas = self.thetas - self.alpha * gr
         return self.thetas
 
     @_guard_
