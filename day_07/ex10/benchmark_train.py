@@ -16,7 +16,7 @@ def plot_model(X, Y, Y_hat, Y_had_base, feature):
     plt.scatter(X, Y, marker='o',
                 c='darkblue', label="Sell price", alpha=0.05)
     plt.scatter(X, Y_had_base, marker='.',
-                c='blue', label="Prediction base", alpha=0.1)
+                c='blue', label="Prediction base")
     plt.scatter(X, Y_hat, marker='.',
                 c='green', label="Prediction learned")
     plt.legend(loc='lower right')
@@ -48,8 +48,7 @@ def sqr_univar_processing(data, feature, alpha, thetas=np.array([[0.0], [0.0], [
     return mlr.mse_(data['y_test'], model_after)
 
 
-def poly_univar_processing(data, feature, power, alpha, thetas, max_iter=1e5):
-    print(thetas)
+def poly_univar_processing(data, feature, power, alpha, thetas, max_iter=2e5):
     mlr = MyLR(thetas, alpha=alpha, max_iter=max_iter)
     x_train_ = add_polynomial_features(data['x_train'], power)
     x_test_ = add_polynomial_features(data['x_test'], power)
@@ -63,6 +62,11 @@ def poly_univar_processing(data, feature, power, alpha, thetas, max_iter=1e5):
 
 
 def norm_data(x):
+    x_max = max(x)
+    return x / x_max, x_max
+
+
+def norm_data_mm(x):
     x_max = max(x)
     return x / x_max, x_max
 
@@ -132,12 +136,18 @@ sqr_mse = []
 
 poly_mse = []
 """ Univariate poly regression """
-for j in [2,3,4]:
-    for i in range(len(features)):
-        prepared_data = {"x_train": x_train[:, i], "x_test": x_test[:, i],
-                        "y_train": y_train, "y_test": y_test, "x_max": max_x[i]}
-        poly_mse.append(poly_univar_processing(prepared_data, features[i], j, 1e-1,
-                                            thetas=np.array([[2e5] * (j + 1)]).reshape((-1, 1))))
+# for j in [2,3,4]:
+#     for i in range(len(features)):
+#         prepared_data = {"x_train": x_train[:, i], "x_test": x_test[:, i],
+#                         "y_train": y_train, "y_test": y_test, "x_max": max_x[i]}
+#         poly_mse.append(poly_univar_processing(prepared_data, features[i], j, 1e-1,
+#                                             thetas=np.array([[2e5] * (j + 1)]).reshape((-1, 1))))
+
+
+prepared_data = {"x_train": x_train[:, 1], "x_test": x_test[:, 1],
+                "y_train": y_train, "y_test": y_test, "x_max": max_x[1]}
+poly_mse.append(poly_univar_processing(prepared_data, features[1], 3, 1e-0,
+                                    thetas=np.array([[2.3e5], [2.7e6], [-5.1e6], [2.9e6]])))
 
 for i in range(len(poly_mse)):
     print("{:e}".format(poly_mse[i]))                                            
