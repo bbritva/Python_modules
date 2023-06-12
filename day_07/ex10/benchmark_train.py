@@ -48,7 +48,7 @@ def sqr_univar_processing(data, feature, alpha, thetas=np.array([[0.0], [0.0], [
     return mlr.mse_(data['y_test'], model_after)
 
 
-def poly_univar_processing(data, feature, power, alpha, thetas, max_iter=2e5):
+def poly_univar_processing(data, feature, power, alpha, thetas, max_iter=1e5):
     mlr = MyLR(thetas, alpha=alpha, max_iter=max_iter)
     x_train_ = add_polynomial_features(data['x_train'], power)
     x_test_ = add_polynomial_features(data['x_test'], power)
@@ -64,12 +64,6 @@ def poly_univar_processing(data, feature, power, alpha, thetas, max_iter=2e5):
 def norm_data(x):
     x_max = max(x)
     return x / x_max, x_max
-
-
-def norm_data_mm(x):
-    x_max = max(x)
-    return x / x_max, x_max
-
 
 """ Read data """
 try:
@@ -135,7 +129,7 @@ sqr_mse = []
 #     print("{:e}".format(sqr_mse[i]))
 
 poly_mse = []
-""" Univariate poly regression """
+# """ Univariate poly regression """
 # for j in [2,3,4]:
 #     for i in range(len(features)):
 #         prepared_data = {"x_train": x_train[:, i], "x_test": x_test[:, i],
@@ -143,11 +137,46 @@ poly_mse = []
 #         poly_mse.append(poly_univar_processing(prepared_data, features[i], j, 1e-1,
 #                                             thetas=np.array([[2e5] * (j + 1)]).reshape((-1, 1))))
 
+""" Multivariate cube regression """
+my_lreg = MyLR(thetas=np.array(
+    [[4e5], [3e5], [-3e4],[4e5], [3e5], [-3e4], [-2e3], [3e5], [-3e4], [-2e3]]), alpha=1e-1, max_iter=1e5)
 
-prepared_data = {"x_train": x_train[:, 1], "x_test": x_test[:, 1],
-                "y_train": y_train, "y_test": y_test, "x_max": max_x[1]}
-poly_mse.append(poly_univar_processing(prepared_data, features[1], 3, 1e-0,
-                                    thetas=np.array([[2.3e5], [2.7e6], [-5.1e6], [2.9e6]])))
+x_train_ = add_polynomial_features(x_train, 3)
+x_test_ = add_polynomial_features(x_test, 3)
+y_hat_base = my_lreg.predict_(x_test_)
+my_lreg.fit_(x_train_, y_train)
+y_hat = my_lreg.predict_(x_test_)
+print(my_lreg.thetas)
+poly_mse.append(my_lreg.mse_(y_test, y_hat))
+for i in range(len(features)):
+    plot_model(x_test[:, i], y_test, y_hat, y_hat_base, features[i])
+
+
+""" Multivariate quadr regression """
+my_lreg = MyLR(thetas=np.array(
+    [[4e5], [3e5], [-3e4],[4e5], [3e5], [-3e4],[4e5], [3e5], [-3e4], [-2e3], [3e5], [-3e4], [-2e3]]), alpha=1e-1, max_iter=1e5)
+
+x_train_ = add_polynomial_features(x_train, 4)
+x_test_ = add_polynomial_features(x_test, 4)
+y_hat_base = my_lreg.predict_(x_test_)
+my_lreg.fit_(x_train_, y_train)
+y_hat = my_lreg.predict_(x_test_)
+print(my_lreg.thetas)
+poly_mse.append(my_lreg.mse_(y_test, y_hat))
+for i in range(len(features)):
+    plot_model(x_test[:, i], y_test, y_hat, y_hat_base, features[i])
+
+
+
+# prepared_data = {"x_train": x_train[:, 1], "x_test": x_test[:, 1],
+#                 "y_train": y_train, "y_test": y_test, "x_max": max_x[1]}
+# poly_mse.append(poly_univar_processing(prepared_data, features[1], 3, 1e-0,
+#                                     thetas=np.array([[1.9e5], [2.9e6], [-5.2e6], [3.0e6]])))
 
 for i in range(len(poly_mse)):
-    print("{:e}".format(poly_mse[i]))                                            
+    print("{:e}".format(poly_mse[i]))
+"""
+Thetas: [[  200030.49610369]
+ [ 2839619.08802345]
+ [-5283489.39101154]
+ [ 2970122.93681291]]"""
