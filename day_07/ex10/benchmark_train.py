@@ -7,9 +7,9 @@ from polynomial_model import add_polynomial_features
 from mylinearregression import MyLinearRegression as MyLR
 from data_spliter import data_spliter
 
-# filename = "small.csv"
 filename = "space_avocado.csv"
 features = ["weight", "prod_distance", "time_delivery"]
+plot = False
 
 
 def plot_model(X, Y, Y_hat, feature):
@@ -20,7 +20,7 @@ def plot_model(X, Y, Y_hat, feature):
                 c='blue', label="Prediction")
     plt.legend(loc='lower right')
     plt.grid()
-    plt.show()
+    plt.show(block=False)
 
 
 def lin_univar_processing(data, feature, alpha, thetas=np.array([[0.0], [0.0]]), max_iter=1e5):
@@ -59,6 +59,18 @@ def poly_univar_processing(data, feature, power, alpha, thetas, max_iter=1e5):
     print("Thetas:", mlr.thetas)
     return mlr.mse_(data['y_test'], model_after)
 
+def poly_multivar_processing(power, x_train, x_test, y_train, y_test):
+    thetas = np.zeros(((3 * power + 1), 1))
+    my_lreg = MyLR(thetas=thetas, alpha=1e-1, max_iter=1e5)
+    x_train_ = add_polynomial_features(x_train, power)
+    x_test_ = add_polynomial_features(x_test, power)
+    my_lreg.fit_(x_train_, y_train)
+    y_hat = my_lreg.predict_(x_test_)
+    poly_mse.append(my_lreg.mse_(y_test, y_hat))
+    if plot:
+        for i in range(len(features)):
+            plot_model(x_test[:, i], y_test, y_hat, features[i])
+
 
 def norm_data(x):
     x_max = max(x)
@@ -85,65 +97,59 @@ if __name__=="__main__":
 
     poly_mse = []
 
-    """ Multivariate linear regression """
-    my_lreg = MyLR(thetas=np.array(
-        [[4e5], [3e5], [-3e4], [-2e3]]), alpha=1e-1, max_iter=1e5)
-    my_lreg.fit_(x_train, y_train)
-    y_hat = my_lreg.predict_(x_test)
-    poly_mse.append(my_lreg.mse_(y_test, y_hat))
-    if plot:
-        for i in range(len(features)):
-            plot_model(x_test[:, i], y_test, y_hat, features[i])
+    # """ Multivariate linear regression """
+    # my_lreg = MyLR(thetas=np.array(
+    #     [[4e5], [3e5], [-3e4], [-2e3]]), alpha=1e-1, max_iter=1e5)
+    # my_lreg.fit_(x_train, y_train)
+    # y_hat = my_lreg.predict_(x_test)
+    # poly_mse.append(my_lreg.mse_(y_test, y_hat))
+    # if plot:
+    #     for i in range(len(features)):
+    #         plot_model(x_test[:, i], y_test, y_hat, features[i])
 
-    """ Multivariate square regression """
-    my_lreg = MyLR(thetas=np.array(
-        [[4e5], [3e5], [-3e4], [-2e3], [3e5], [-3e4], [-2e3]]), alpha=1e-1, max_iter=1e5)
+    # """ Multivariate square regression """
+    # my_lreg = MyLR(thetas=np.array(
+    #     [[4e5], [3e5], [-3e4], [-2e3], [3e5], [-3e4], [-2e3]]), alpha=1e-1, max_iter=1e5)
 
-    x_train_ = add_polynomial_features(x_train, 2)
-    x_test_ = add_polynomial_features(x_test, 2)
-    y_hat_base = my_lreg.predict_(x_test_)
-    my_lreg.fit_(x_train_, y_train)
-    y_hat = my_lreg.predict_(x_test_)
-    print(my_lreg.thetas)
-    poly_mse.append(my_lreg.mse_(y_test, y_hat))
-    if plot:
-        for i in range(len(features)):
-            plot_model(x_test[:, i], y_test, y_hat, features[i])
-
-
-    """ Multivariate cube regression """
-    my_lreg = MyLR(thetas=np.array(
-        [[4e5], [3e5], [-3e4], [4e5], [3e5], [-3e4], [-2e3], [3e5], [-3e4], [-2e3]]), alpha=1e-1, max_iter=1e5)
-    x_train_ = add_polynomial_features(x_train, 3)
-    x_test_ = add_polynomial_features(x_test, 3)
-    my_lreg.fit_(x_train_, y_train)
-    y_hat = my_lreg.predict_(x_test_)
-    print(my_lreg.thetas)
-    poly_mse.append(my_lreg.mse_(y_test, y_hat))
-    if plot:
-        for i in range(len(features)):
-            plot_model(x_test[:, i], y_test, y_hat, features[i])
+    # x_train_ = add_polynomial_features(x_train, 2)
+    # x_test_ = add_polynomial_features(x_test, 2)
+    # y_hat_base = my_lreg.predict_(x_test_)
+    # my_lreg.fit_(x_train_, y_train)
+    # y_hat = my_lreg.predict_(x_test_)
+    # poly_mse.append(my_lreg.mse_(y_test, y_hat))
+    # if plot:
+    #     for i in range(len(features)):
+    #         plot_model(x_test[:, i], y_test, y_hat, features[i])
 
 
-    """ Multivariate quadr regression """
-    my_lreg = MyLR(thetas=np.array(
-        [[4e5], [3e5], [-3e4], [4e5], [3e5], [-3e4], [4e5], [3e5], [-3e4], [-2e3], [3e5], [-3e4], [-2e3]]), alpha=1e-1, max_iter=1e5)
-    x_train_ = add_polynomial_features(x_train, 4)
-    x_test_ = add_polynomial_features(x_test, 4)
-    my_lreg.fit_(x_train_, y_train)
-    y_hat = my_lreg.predict_(x_test_)
-    poly_mse.append(my_lreg.mse_(y_test, y_hat))
-    if plot:
-        for i in range(len(features)):
-            plot_model(x_test[:, i], y_test, y_hat, features[i])
+    # """ Multivariate cube regression """
+    # my_lreg = MyLR(thetas=np.array(
+    #     [[4e5], [3e5], [-3e4], [4e5], [3e5], [-3e4], [-2e3], [3e5], [-3e4], [-2e3]]), alpha=1e-1, max_iter=1e5)
+    # x_train_ = add_polynomial_features(x_train, 3)
+    # x_test_ = add_polynomial_features(x_test, 3)
+    # my_lreg.fit_(x_train_, y_train)
+    # y_hat = my_lreg.predict_(x_test_)
+    # poly_mse.append(my_lreg.mse_(y_test, y_hat))
+    # if plot:
+    #     for i in range(len(features)):
+    #         plot_model(x_test[:, i], y_test, y_hat, features[i])
+
+
+    # """ Multivariate quadr regression """
+    # my_lreg = MyLR(thetas=np.array(
+    #     [[4e5], [3e5], [-3e4], [4e5], [3e5], [-3e4], [4e5], [3e5], [-3e4], [-2e3], [3e5], [-3e4], [-2e3]]), alpha=1e-1, max_iter=1e5)
+    # x_train_ = add_polynomial_features(x_train, 4)
+    # x_test_ = add_polynomial_features(x_test, 4)
+    # my_lreg.fit_(x_train_, y_train)
+    # y_hat = my_lreg.predict_(x_test_)
+    # poly_mse.append(my_lreg.mse_(y_test, y_hat))
+    # if plot:
+    #     for i in range(len(features)):
+    #         plot_model(x_test[:, i], y_test, y_hat, features[i])
+
+    for i in range(1, 5):
+        poly_multivar_processing(i, x_train, x_test, y_train, y_test)
 
 
     for i in range(len(poly_mse)):
-        print("Mse for power {:d} = {:e}".format(i, poly_mse[i]))
-
-
-    """
-    Thetas: [[  200030.49610369]
-    [ 2839619.08802345]
-    [-5283489.39101154]
-    [ 2970122.93681291]]"""
+        print("Mse for power {:d} = {:e}".format(i + 1, poly_mse[i]))
