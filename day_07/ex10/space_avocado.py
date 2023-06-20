@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import sys
 import pickle 
 
 from polynomial_model import add_polynomial_features
@@ -12,8 +11,8 @@ from data_spliter import data_spliter
 filename = "space_avocado.csv"
 features = ["weight", "prod_distance", "time_delivery"]
 
-def plot_model(X, Y, Y_hat, feature):
-    plt.title(feature)
+def plot_model(X, Y, Y_hat, feature, power):
+    plt.title(feature + " with power = " + str(power))
     plt.scatter(X, Y, marker='o',
                 c='darkblue', label="Sell price", alpha=0.05)
     plt.scatter(X, Y_hat, marker='.',
@@ -29,7 +28,7 @@ def poly_multivar_processing(power, x_train, x_test, y_train, y_test, thetas):
     x_test_ = add_polynomial_features(x_test, power)
     y_hat = my_lreg.predict_(x_test_)
     for i in range(len(features)):
-        plot_model(x_test[:, i], y_test, y_hat, features[i])
+        plot_model(x_test[:, i], y_test, y_hat, features[i], power)
 
 
 if __name__ == "__main__":
@@ -39,7 +38,6 @@ if __name__ == "__main__":
     max_x = models_data["max_x"]
 
     """ Read data """
-    plot = len(sys.argv) > 1 and sys.argv[1] == "-P"
     try:
         data = pd.read_csv("day_07/resources/" + filename)
     except FileNotFoundError:
