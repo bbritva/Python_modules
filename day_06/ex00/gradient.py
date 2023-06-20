@@ -17,12 +17,14 @@ def simple_gradient(x, y, theta):
     This function should not raise any Exception.
     """
     try:
-        # print(x,y,theta)
         width = x.shape[0]
-        y_hat = np.c_[np.ones(width), x].dot(theta)
-        g_0 = (y_hat - y).sum() / y.shape[0]
-        g_1 = ((y_hat - y) * x).sum() / y.shape[0]
-        return np.array([g_0, g_1])
+        dj_t1 = 0
+        dj_t0 = 0
+        for i in range(width):
+            y_predict = theta[1] * x[i] + theta[0]
+            dj_t1 += (y_predict - y[i]) * x[i]
+            dj_t0 += (y_predict - y[i])
+        return np.array([dj_t0 / width, dj_t1 / width])
     except Exception as e:
         print(e)
         return None
