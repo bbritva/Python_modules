@@ -96,7 +96,6 @@ if __name__=="__main__":
     x_train, x_test, y_train, y_test = data_spliter(
         data[["weight", "prod_distance", "time_delivery"]], data[["target"]], 0.8)
     max_x = [0., 0., 0.]
-    lin_mse = []
     for i in range(len(features)):
         x_train[:, i], max_x[i] = norm_data(x_train[:, i])
         x_test[:, i] /= max_x[i]
