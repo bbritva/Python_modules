@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import sys
+import pickle 
 
 from polynomial_model import add_polynomial_features
 from mylinearregression import MyLinearRegression as MyLR
@@ -104,13 +105,15 @@ if __name__=="__main__":
     # y_train /= max_y
 
     poly_mse = {}
-
+    poly_mse["max_x"] = max_x
     
     for i in range(1, 5):
         poly_multivar_processing(i, x_train, x_test, y_train, y_test)
 
 
-    for i in poly_mse.keys():
-        print("Mse for power {:d} = {:e}".format(i, poly_mse[i]["mse"]))
-    
-    np.savetxt("model.csv", np.r_[poly_mse[i]["thetas"].flatten(), max_x], delimiter=',')
+    # for i in poly_mse.keys():
+    #     print("Mse for power {:d} = {:e}".format(i, poly_mse[i]["mse"]))
+    print(poly_mse)
+
+    with open("model.pickle", 'wb') as my_file:
+        pickle.dump(poly_mse, my_file)

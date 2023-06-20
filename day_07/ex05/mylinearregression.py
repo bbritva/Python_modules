@@ -37,20 +37,11 @@ class MyLinearRegression():
         start = time.time()
         cycles = int(self.max_iter / 10)
         for j in range(10):
-            gr = 0
             for i in range(cycles):
-                gr = self.gradient(x, y)
-                # print(gr)
-                tmp = self.thetas.copy()
-                self.thetas -= self.alpha * gr
-                if np.array_equal(tmp, self.thetas):
-                    print(i, j)
-                    break
+                self.thetas -= self.alpha * self.gradient(x, y)
             now = time.time() - start
-            print("%d%%, time = %5.2fs" % ((j + 1) * 10, now))
-            print(self.thetas)
-            print(gr)
-        print("")    
+            print("\r%d%%, time =%5.2fs" % ((j + 1) * 10, now), end="")
+        print("")
         return self.thetas
 
     @_guard_
