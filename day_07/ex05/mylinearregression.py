@@ -1,4 +1,5 @@
 import numpy as np
+import time
 
 def _guard_(func):
     def wrapper(*args, **kwargs):
@@ -33,10 +34,23 @@ class MyLinearRegression():
 
     @_guard_
     def fit_(self, x, y):
-        for i in range(self.max_iter):
-            gr = self.gradient(x, y)
-            # print(gr)
-            self.thetas = self.thetas - self.alpha * gr
+        start = time.time()
+        cycles = int(self.max_iter / 10)
+        for j in range(10):
+            gr = 0
+            for i in range(cycles):
+                gr = self.gradient(x, y)
+                # print(gr)
+                tmp = self.thetas.copy()
+                self.thetas -= self.alpha * gr
+                if np.array_equal(tmp, self.thetas):
+                    print(i, j)
+                    break
+            now = time.time() - start
+            print("%d%%, time = %5.2fs" % ((j + 1) * 10, now))
+            print(self.thetas)
+            print(gr)
+        print("")    
         return self.thetas
 
     @_guard_

@@ -20,7 +20,7 @@ def plot_model(X, Y, Y_hat, feature):
                 c='blue', label="Prediction")
     plt.legend(loc='lower right')
     plt.grid()
-    plt.show(block=False)
+    plt.show()
 
 
 def lin_univar_processing(data, feature, alpha, thetas=np.array([[0.0], [0.0]]), max_iter=1e5):
@@ -61,12 +61,17 @@ def poly_univar_processing(data, feature, power, alpha, thetas, max_iter=1e5):
 
 def poly_multivar_processing(power, x_train, x_test, y_train, y_test):
     thetas = np.zeros(((3 * power + 1), 1))
-    my_lreg = MyLR(thetas=thetas, alpha=1e-1, max_iter=1e5)
+    alpha = .1
+    max_iter = 1e4
+    my_lreg = MyLR(thetas, alpha, max_iter)
     x_train_ = add_polynomial_features(x_train, power)
     x_test_ = add_polynomial_features(x_test, power)
     my_lreg.fit_(x_train_, y_train)
     y_hat = my_lreg.predict_(x_test_)
-    poly_mse.append(my_lreg.mse_(y_test, y_hat))
+    poly_mse[power] = {
+        "mse" : my_lreg.mse_(y_test, y_hat),
+        "thetas" : my_lreg.thetas
+    }
     if plot:
         for i in range(len(features)):
             plot_model(x_test[:, i], y_test, y_hat, features[i])
@@ -94,62 +99,18 @@ if __name__=="__main__":
     for i in range(len(features)):
         x_train[:, i], max_x[i] = norm_data(x_train[:, i])
         x_test[:, i] /= max_x[i]
+    # max_y = max(y_train)
+    # y_test /= max_y
+    # y_train /= max_y
 
-    poly_mse = []
+    poly_mse = {}
 
-    # """ Multivariate linear regression """
-    # my_lreg = MyLR(thetas=np.array(
-    #     [[4e5], [3e5], [-3e4], [-2e3]]), alpha=1e-1, max_iter=1e5)
-    # my_lreg.fit_(x_train, y_train)
-    # y_hat = my_lreg.predict_(x_test)
-    # poly_mse.append(my_lreg.mse_(y_test, y_hat))
-    # if plot:
-    #     for i in range(len(features)):
-    #         plot_model(x_test[:, i], y_test, y_hat, features[i])
-
-    # """ Multivariate square regression """
-    # my_lreg = MyLR(thetas=np.array(
-    #     [[4e5], [3e5], [-3e4], [-2e3], [3e5], [-3e4], [-2e3]]), alpha=1e-1, max_iter=1e5)
-
-    # x_train_ = add_polynomial_features(x_train, 2)
-    # x_test_ = add_polynomial_features(x_test, 2)
-    # y_hat_base = my_lreg.predict_(x_test_)
-    # my_lreg.fit_(x_train_, y_train)
-    # y_hat = my_lreg.predict_(x_test_)
-    # poly_mse.append(my_lreg.mse_(y_test, y_hat))
-    # if plot:
-    #     for i in range(len(features)):
-    #         plot_model(x_test[:, i], y_test, y_hat, features[i])
-
-
-    # """ Multivariate cube regression """
-    # my_lreg = MyLR(thetas=np.array(
-    #     [[4e5], [3e5], [-3e4], [4e5], [3e5], [-3e4], [-2e3], [3e5], [-3e4], [-2e3]]), alpha=1e-1, max_iter=1e5)
-    # x_train_ = add_polynomial_features(x_train, 3)
-    # x_test_ = add_polynomial_features(x_test, 3)
-    # my_lreg.fit_(x_train_, y_train)
-    # y_hat = my_lreg.predict_(x_test_)
-    # poly_mse.append(my_lreg.mse_(y_test, y_hat))
-    # if plot:
-    #     for i in range(len(features)):
-    #         plot_model(x_test[:, i], y_test, y_hat, features[i])
-
-
-    # """ Multivariate quadr regression """
-    # my_lreg = MyLR(thetas=np.array(
-    #     [[4e5], [3e5], [-3e4], [4e5], [3e5], [-3e4], [4e5], [3e5], [-3e4], [-2e3], [3e5], [-3e4], [-2e3]]), alpha=1e-1, max_iter=1e5)
-    # x_train_ = add_polynomial_features(x_train, 4)
-    # x_test_ = add_polynomial_features(x_test, 4)
-    # my_lreg.fit_(x_train_, y_train)
-    # y_hat = my_lreg.predict_(x_test_)
-    # poly_mse.append(my_lreg.mse_(y_test, y_hat))
-    # if plot:
-    #     for i in range(len(features)):
-    #         plot_model(x_test[:, i], y_test, y_hat, features[i])
-
+    
     for i in range(1, 5):
         poly_multivar_processing(i, x_train, x_test, y_train, y_test)
 
 
-    for i in range(len(poly_mse)):
-        print("Mse for power {:d} = {:e}".format(i + 1, poly_mse[i]))
+    for i in poly_mse.keys():
+        print("Mse for power {:d} = {:e}".format(i, poly_mse[i]["mse"]))
+    
+    np.savetxt("model.csv", np.r_[poly_mse[i]["thetas"].flatten(), max_x], delimiter=',')
