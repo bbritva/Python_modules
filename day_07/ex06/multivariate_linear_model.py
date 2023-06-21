@@ -9,8 +9,7 @@ def _guard_(func):
     def wrapper(*args, **kwargs):
         try:
             return (func(*args, **kwargs))
-        except Exception as e:
-            print("Error:", func.__name__, e)
+        except:
             return None
     return wrapper
 
@@ -84,9 +83,10 @@ if __name__=="__main__":
     try:
         data = pd.read_csv("day_07/resources/spacecraft_data.csv")
     except FileNotFoundError:
-        data = pd.read_csv("../resources/spacecraft_data.csv")
-    except FileNotFoundError:
-        exit()
+        try:
+            data = pd.read_csv("../resources/spacecraft_data.csv")
+        except FileNotFoundError:
+            exit()
     univar_processing(data, "Age", 0.01, thetas=np.array([[500.], [0.]]))
     univar_processing(data, "Thrust_power", 0.0001,
                     thetas=np.array([[0.0], [4.0]]))

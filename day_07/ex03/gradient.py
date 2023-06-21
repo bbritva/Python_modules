@@ -20,8 +20,7 @@ def gradient(x, y, theta):
     try:
         x_ = np.c_[np.ones(x.shape[0]), x]
         return x_.T.dot(x_.dot(theta) - y) / y.shape[0]
-    except Exception as e:
-        print(e)
+    except:
         return None
 
 x = np.array([

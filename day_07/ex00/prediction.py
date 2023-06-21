@@ -20,8 +20,7 @@ def simple_predict(x, theta):
             for j in range(x.shape[1]):
                 res[i] += theta[j + 1] * x[i][j]
         return res.astype(np.float64)
-    except Exception as e:
-        print(e)
+    except:
         return None
 
 

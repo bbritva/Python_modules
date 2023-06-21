@@ -5,9 +5,7 @@ def _guard_(func):
     def wrapper(*args, **kwargs):
         try:
             return (func(*args, **kwargs))
-        except Exception as e:
-            print("Error:", func.__name__,e)
-            # print(args)
+        except:
             return None
     return wrapper
 
@@ -35,12 +33,13 @@ class MyLinearRegression():
     @_guard_
     def fit_(self, x, y):
         start = time.time()
-        cycles = int(self.max_iter / 10)
-        for j in range(10):
+        cycles = int(self.max_iter / 20)
+        print("\r%d%%, time =%5.2fs" % (0, 0), end="")
+        for j in range(20):
             for i in range(cycles):
                 self.thetas -= self.alpha * self.gradient(x, y)
             now = time.time() - start
-            print("\r%d%%, time =%5.2fs" % ((j + 1) * 10, now), end="")
+            print("\r%d%%, time =%5.2fs" % ((j + 1) * 5, now), end="")
         print("")
         return self.thetas
 

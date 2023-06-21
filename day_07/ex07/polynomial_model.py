@@ -7,8 +7,7 @@ def _guard_(func):
     def wrapper(*args, **kwargs):
         try:
             return (func(*args, **kwargs))
-        except Exception as e:
-            print("Error:", func.__name__, e)
+        except:
             return None
     return wrapper
 
@@ -32,20 +31,21 @@ def add_polynomial_features(x, power):
         res = np.c_[res, x ** (i + 1)]
     return res
 
-# x = np.arange(1,6).reshape(-1, 1)
-# Example 0:
-# print(add_polynomial_features(x, 3))
-# Output:
-# array([[ 1, 1, 1],
-# [ 2, 4, 8],
-# [ 3, 9, 27],
-# [ 4, 16, 64],
-# [ 5, 25, 125]])
-# Example 1:
-# print(add_polynomial_features(x, 6))
-# Output:
-# array([[ 1, 1, 1, 1, 1, 1],
-# [ 2, 4, 8, 16, 32, 64],
-# [ 3, 9, 27, 81, 243, 729],
-# [ 4, 16, 64, 256, 1024, 4096],
-# [ 5, 25, 125, 625, 3125, 15625]])
+if __name__=="__main__":
+    x = np.arange(1,6).reshape(-1, 1)
+    # Example 0:
+    print(add_polynomial_features(x, 3))
+    # Output:
+    # array([[ 1, 1, 1],
+    # [ 2, 4, 8],
+    # [ 3, 9, 27],
+    # [ 4, 16, 64],
+    # [ 5, 25, 125]])
+    # Example 1:
+    print(add_polynomial_features(x, 6))
+    # Output:
+    # array([[ 1, 1, 1, 1, 1, 1],
+    # [ 2, 4, 8, 16, 32, 64],
+    # [ 3, 9, 27, 81, 243, 729],
+    # [ 4, 16, 64, 256, 1024, 4096],
+    # [ 5, 25, 125, 625, 3125, 15625]])
