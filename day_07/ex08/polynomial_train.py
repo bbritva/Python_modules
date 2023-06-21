@@ -37,9 +37,10 @@ def do_process(thetas, data, alpha=1e-4, max_iter=1e5):
 try:
     data = pd.read_csv("day_07/resources/are_blue_pills_magics.csv")
 except FileNotFoundError:
-    data = pd.read_csv("../resources/are_blue_pills_magics.csv")
-except FileNotFoundError:
-    exit()
+    try:
+        data = pd.read_csv("../resources/are_blue_pills_magics.csv")
+    except FileNotFoundError:
+        exit()
 
 theta1 = np.array([[80.], [-7.]])
 theta2 = np.array([[85.], [-7.], [-0.2]])

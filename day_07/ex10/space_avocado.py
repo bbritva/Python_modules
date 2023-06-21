@@ -32,18 +32,20 @@ def poly_multivar_processing(power, x_train, x_test, y_train, y_test, thetas):
 
 
 if __name__ == "__main__":
-
-    with open("model_long.pickle", 'rb') as my_file:
-        models_data = pickle.load(my_file)
-    max_x = models_data["max_x"]
-
+    try:
+        with open("model_long.pickle", 'rb') as my_file:
+            models_data = pickle.load(my_file)
+        max_x = models_data["max_x"]
+    except KeyError:
+        exit()
     """ Read data """
     try:
         data = pd.read_csv("day_07/resources/" + filename)
     except FileNotFoundError:
-        data = pd.read_csv("../resources/" + filename)
-    except FileNotFoundError:
-        exit()
+        try:
+            data = pd.read_csv("../resources/" + filename)
+        except FileNotFoundError:
+            exit()
 
     """ Split and normalize data"""
     x_train, x_test, y_train, y_test = data_spliter(

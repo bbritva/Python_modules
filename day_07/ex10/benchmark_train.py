@@ -36,9 +36,10 @@ if __name__=="__main__":
     try:
         data = pd.read_csv("day_07/resources/" + filename)
     except FileNotFoundError:
-        data = pd.read_csv("../resources/" + filename)
-    except FileNotFoundError:
-        exit()
+        try:
+            data = pd.read_csv("../resources/" + filename)
+        except FileNotFoundError:
+            exit()
 
     """ Split and normalize data"""
     for feature in features:
