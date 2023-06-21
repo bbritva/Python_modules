@@ -13,7 +13,7 @@ poly_mse = {}
 def poly_multivar_processing(power, x_train, x_test, y_train, y_test):
     thetas = np.zeros(((3 * power + 1), 1))
     alpha = .1
-    max_iter = 3e7
+    max_iter = 1e4
     my_lreg = MyLR(thetas, alpha, max_iter)
     x_train_ = add_polynomial_features(x_train, power)
     x_test_ = add_polynomial_features(x_test, power)
@@ -27,9 +27,8 @@ def poly_multivar_processing(power, x_train, x_test, y_train, y_test):
 
 
 def norm_data(x):
-    minx = x.min()
-    mm = x.max() - minx
-    return (x - minx) / mm
+    x_max = max(x)
+    return x / x_max, x_max
 
 if __name__=="__main__":
     """ Read data """
@@ -42,19 +41,15 @@ if __name__=="__main__":
             exit()
 
     """ Split and normalize data"""
-    for feature in features:
-        data[feature] = norm_data(data[feature])
     x_train, x_test, y_train, y_test = data_spliter(
         data[["weight", "prod_distance", "time_delivery"]], data[["target"]], 0.8)
-    # max_x = [0., 0., 0.]
-    # for i in range(len(features)):
-    #     x_train[:, i], max_x[i] = norm_data(x_train[:, i])
-    #     x_test[:, i] /= max_x[i]
-    # max_y = max(y_train)
-    # y_test /= max_y
-    # y_train /= max_y
+    max_x = [0., 0., 0.]
+    for i in range(len(features)):
+        x_train[:, i], max_x[i] = norm_data(x_train[:, i])
+        x_test[:, i] /= max_x[i]
 
-    # poly_mse["max_x"] = max_x
+
+    poly_mse["max_x"] = max_x
     
     for i in range(1, 5):
         poly_multivar_processing(i, x_train, x_test, y_train, y_test)
