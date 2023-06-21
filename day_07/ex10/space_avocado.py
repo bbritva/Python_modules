@@ -33,7 +33,7 @@ def poly_multivar_processing(power, x_train, x_test, y_train, y_test, thetas):
 
 if __name__ == "__main__":
 
-    with open("model.pickle", 'rb') as my_file:
+    with open("model_long.pickle", 'rb') as my_file:
         models_data = pickle.load(my_file)
     max_x = models_data["max_x"]
 
@@ -54,3 +54,5 @@ if __name__ == "__main__":
 
     for i in (1, 2, 3, 4):
         poly_multivar_processing(i, x_train, x_test, y_train, y_test, models_data[i]["thetas"])
+        print("MSE for power %d = %e" % (i, models_data[i]["mse"]))
+    
