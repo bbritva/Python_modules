@@ -24,7 +24,8 @@ def sigmoid_(x):
     Raises:
     This function should not raise any Exception.
     """
-    return 1 / (1 + math.e ** -x)
+    if len(x.shape) == 2 and x.shape[1] == 1:
+        return 1 / (1 + math.e ** -x)
 
 
 if __name__=="__main__":
@@ -43,3 +44,7 @@ if __name__=="__main__":
     print(sigmoid_(x))
     # Output:
     # array([[0.01798620996209156], [0.8807970779778823], [0.5]])
+    # Example 4:
+    x = np.array([])
+    print(sigmoid_(x))
+    # Output:
