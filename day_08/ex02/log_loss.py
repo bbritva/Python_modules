@@ -49,24 +49,6 @@ def log_loss_(y, y_hat, eps=1e-15):
     return float(res / - y.shape[0])
 
 
-@_guard_
-def vec_log_loss_(y, y_hat, eps=1e-15):
-    """
-    Compute the logistic loss value.
-    Args:
-    y: has to be an numpy.ndarray, a vector of shape m * 1.
-    y_hat: has to be an numpy.ndarray, a vector of shape m * 1.
-    eps: epsilon (default=1e-15)
-    Returns:
-    The logistic loss value as a float.
-    None on any error.
-    Raises:
-    This function should not raise any Exception.
-    """
-    ones = np.ones(y.shape)
-    return (y.dot(np.log(y_hat)) + (ones - y).dot(np.log(ones - y_hat))) / -y.shape[1]
-
-
 if __name__ == "__main__":
     # Example 1:
     y1 = np.array([1]).reshape((-1, 1))
