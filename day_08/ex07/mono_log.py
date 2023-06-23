@@ -3,8 +3,11 @@ import pandas as pd
 import sys
 
 from my_logistic_regression import MyLogisticRegression as MyLR
+from data_spliter import data_spliter
 
-filename = "solar_system_census.csv"
+
+features = "solar_system_census.csv"
+targets = "solar_system_census_planets.csv"
 
 
 if __name__ == "__main__":
@@ -21,9 +24,17 @@ if __name__ == "__main__":
 
     """ Read data """
     try:
-        data = pd.read_csv("day_08/resources/" + filename)
+        data_features = pd.read_csv("day_08/resources/" + features)
+        data_targets = pd.read_csv("day_08/resources/" + targets)
     except FileNotFoundError:
         try:
-            data = pd.read_csv("../resources/" + filename)
+            data_features = pd.read_csv("../resources/" + features)
+            data_targets = pd.read_csv("../resources/" + targets)
         except FileNotFoundError:
             exit()
+
+    planets = np.array(data_targets["Origin"]).reshape((-1, 1))
+    Y = np.zeros(planets.shape, dtype='int8')
+    Y[np.where(planets == zipcode)] = 1
+    X = np.array(data_features[["weight", "height", "bone_density"]])
+    x_train, x_test, y_train, y_test = data_spliter(X, Y, 0.8)
