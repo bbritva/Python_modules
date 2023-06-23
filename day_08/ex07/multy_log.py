@@ -74,12 +74,37 @@ if __name__ == "__main__":
     """ Output """
     res = y_hat == y_test[:, 4].reshape((-1, 1))
     print(res.shape, y_hat.shape, y_test[:, 4].shape)
-    print("Amount of wrong predictions =", res.sum() - res.shape[0])
+    print("Amount of wrong predictions =", res.shape[0] - res.sum())
 
-    # y_hat_ = np.zeros(y_test.shape, dtype='int8')
-    # y_hat_[np.where(y_hat > 0.5)] = 1
-    # for i, feature in enumerate(features):
-    #     plot_model(x_test[:, i], y_test, y_hat_, feature)
-    # res = np.zeros(y_test.shape, dtype='int8')
-    # res[np.where(y_hat_ != y_test)] = 1
-    # print("Amount of wrong predictions =",res.sum())
+    color = ["red", "green", "blue", "black"]
+    plt.xlabel(features[0])
+    plt.ylabel(features[1])
+    for i in range(4):
+        predicted = x_test[np.where(y_hat == i)[0]]
+        actual = x_test[np.where(y_test[:, 4].reshape((-1, 1)) == i)[0]]
+        plt.scatter(predicted[:,0], predicted[:,1], marker='o', label="Origin", alpha=0.2, c=color[i])
+        plt.scatter(actual[:,0], actual[:,1], marker='.', label="Origin", c=color[i])
+    plt.grid()
+    plt.show()
+
+
+    plt.xlabel(features[1])
+    plt.ylabel(features[2])
+    for i in range(4):
+        predicted = x_test[np.where(y_hat == i)[0]]
+        actual = x_test[np.where(y_test[:, 4].reshape((-1, 1)) == i)[0]]
+        plt.scatter(predicted[:,1], predicted[:,2], marker='o', label="Origin", alpha=0.5, c=color[i])
+        plt.scatter(actual[:,1], actual[:,2], marker='.', label="Origin", c=color[i])
+    plt.grid()
+    plt.show()
+
+
+    plt.xlabel(features[0])
+    plt.ylabel(features[2])
+    for i in range(4):
+        predicted = x_test[np.where(y_hat == i)[0]]
+        actual = x_test[np.where(y_test[:, 4].reshape((-1, 1)) == i)[0]]
+        plt.scatter(predicted[:,0], predicted[:,2], marker='o', label="Origin", alpha=0.5, c=color[i])
+        plt.scatter(actual[:,0], actual[:,2], marker='.', label="Origin", c=color[i])
+    plt.grid()
+    plt.show()
