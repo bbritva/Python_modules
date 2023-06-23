@@ -22,7 +22,8 @@ class MyLogisticRegression():
     def __init__(self, theta, alpha=0.001, max_iter=1000):
         self.alpha = alpha
         self.max_iter = int(max_iter)
-        self.theta = theta
+        self.theta = np.array(theta)
+        self.eps = np.full(self.theta.shape, math.e)
 
     @_guard_
     def predict_(self, x):
@@ -32,19 +33,22 @@ class MyLogisticRegression():
     @_guard_
     def gradient(self, x, y):
         x_ = np.c_[np.ones(x.shape[0]), x]
-        y_hat = 1 / (1 + math.e ** -(x_.dot(self.theta)))
+        y_hat = 1 / (1 + self.eps ** -(x_.dot(self.theta)))
         return x_.T.dot(y_hat - y) / y.shape[0]
 
     @_guard_
     def fit_(self, x, y):
+        self.eps = np.full(y.shape, math.e)
         start = time.time()
         cycles = int(self.max_iter / 20)
         print("\r%d%%, time =%5.2fs" % (0, 0), end="")
         for j in range(20):
             for i in range(cycles):
                 self.theta -= self.alpha * self.gradient(x, y)
+                print("\r%5.4f, %5.4f, %5.4f, %5.4f" % (self.theta[0], self.theta[1], self.theta[2], self.theta[3] ), end="")
+            print("")
             now = time.time() - start
-            print("\r%d%%, time =%5.2fs" % ((j + 1) * 5, now), end="")
+            print("\r%d%%, time = %5.2fs" % ((j + 1) * 5, now), end="")
         print("")
         return self.theta
 
