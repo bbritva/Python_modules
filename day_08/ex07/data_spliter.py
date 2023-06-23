@@ -23,6 +23,6 @@ def data_spliter(x, y, proportion):
         res = np.c_[x, y]
         np.random.shuffle(res)
         limit = int(proportion * x.shape[0])
-        return res[:limit, :-1], res[limit:, :-1], res[:limit, -1:], res[limit:, -1:]
+        return res[:limit, :-y.shape[1]], res[limit:, :-y.shape[1]], res[:limit, -y.shape[1]:], res[limit:, -y.shape[1]:]
     except:
         return None
