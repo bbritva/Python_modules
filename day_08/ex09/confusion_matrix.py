@@ -1,9 +1,11 @@
 import numpy as np
+import pandas as pd
 import time
 import math
 
 
 from sklearn.metrics import confusion_matrix
+
 
 def _guard_(func):
     def wrapper(*args, **kwargs):
@@ -14,8 +16,9 @@ def _guard_(func):
             return None
     return wrapper
 
+
 @_guard_
-def confusion_matrix_(y_true, y_hat, labels=None, df_option=True):
+def confusion_matrix_(y_true, y_hat, labels=None, df_option=False):
     """
     Compute confusion matrix to evaluate the accuracy of a classification.
     Args:
@@ -32,53 +35,59 @@ def confusion_matrix_(y_true, y_hat, labels=None, df_option=True):
     This function should not raise any Exception.
     """
 
-    pos_labels = np.unique(np.c_[y_true, y_hat]) if labels is None else np.array(labels)
+    pos_labels = np.unique(np.c_[y_true, y_hat]
+                           ) if labels is None else np.array(labels)
     res = np.zeros((pos_labels.shape[0], pos_labels.shape[0]), type(np.int32))
     for i in range(len(pos_labels)):
         for j in range(len(pos_labels)):
-            res[i][j] = len(y_true[(y_true == pos_labels[i]) & (y_hat == pos_labels[j] )])
+            res[i][j] = len(y_true[(y_true == pos_labels[i])
+                            & (y_hat == pos_labels[j])])
+    if df_option:
+        res = pd.DataFrame(res, index=pos_labels, columns=pos_labels)
+        return res
     return res
 
 
-if __name__=="__main__":
-    y_hat = np.array([['norminet'], ['dog'], ['norminet'], ['norminet'], ['dog'], ['bird']])
-    y = np.array([['dog'], ['dog'], ['norminet'], ['norminet'], ['dog'], ['norminet']])
+if __name__ == "__main__":
+    y_hat = np.array([['norminet'], ['dog'], ['norminet'],
+                     ['norminet'], ['dog'], ['bird']])
+    y = np.array([['dog'], ['dog'], ['norminet'], [
+                 'norminet'], ['dog'], ['norminet']])
     # Example 1:
-    ## your implementation
+    # your implementation
     print(confusion_matrix_(y, y_hat))
-    ## Output:
+    # Output:
     # array([[0 0 0]
     # [0 2 1]
     # [1 0 2]])
-    ## sklearn implementation
+    # sklearn implementation
     print(confusion_matrix(y, y_hat))
-    ## Output:
+    # Output:
     # array([[0 0 0]
     # [0 2 1]
     # [1 0 2]])
     # Example 2:
-    ## your implementation
+    # your implementation
     print(confusion_matrix_(y, y_hat, labels=['dog', 'norminet']))
-    ## Output:
+    # Output:
     # array([[2 1]
     # [0 2]])
-    ## sklearn implementation
+    # sklearn implementation
     print(confusion_matrix(y, y_hat, labels=['dog', 'norminet']))
-    ## Output:
+    # Output:
     # array([[2 1]
     # [0 2]])
-    
-    
-    #Example 3:
+
+    # Example 3:
     print(confusion_matrix_(y, y_hat, df_option=True))
-    #Output:
+    # Output:
     # bird dog norminet
     # bird 0 0 0
     # dog 0 2 1
     # norminet 1 0 2
-    #Example 2:
+    # Example 2:
     print(confusion_matrix_(y, y_hat, labels=['bird', 'dog'], df_option=True))
-    #Output:
+    # Output:
     #      bird dog
     # bird    0   0
     # dog     0   2
