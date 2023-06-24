@@ -16,16 +16,16 @@ def _guard_(func):
     return wrapper
 
 
-def calc_params(y, y_hat):
-    tp = len(y[(y == 1) & (y_hat == 1)])
-    fp = len(y[(y == 0) & (y_hat == 1)])
-    tn = len(y[(y == 0) & (y_hat == 0)])
-    fn = len(y[(y == 1) & (y_hat == 0)])
+def calc_params(y, y_hat, pos_label):
+    tp = len(y[(y == pos_label) & (y_hat == pos_label)])
+    fp = len(y[(y != pos_label) & (y_hat == pos_label)])
+    tn = len(y[(y != pos_label) & (y_hat != pos_label)])
+    fn = len(y[(y == pos_label) & (y_hat != pos_label)])
     return tp, fp, tn, fn
 
 
 @_guard_
-def accuracy_score_(y, y_hat):
+def accuracy_score_(y, y_hat, pos_label=1):
     """
     Compute the accuracy score.
     Args:
@@ -41,7 +41,7 @@ def accuracy_score_(y, y_hat):
     # fp is the number of false positives,
     # tn is the number of true negatives,
     # fn is the number of false negatives.
-    tp, fp, tn, fn = calc_params(y, y_hat)
+    tp, fp, tn, fn = calc_params(y, y_hat, pos_label)
     return (tp + tn) / (tp + fp + tn + fn)
 
 
@@ -58,7 +58,7 @@ def precision_score_(y, y_hat, pos_label=1):
     Raises:
     This function should not raise any Exception.
     """
-    tp, fp, tn, fn = calc_params(y, y_hat)
+    tp, fp, tn, fn = calc_params(y, y_hat, pos_label)
     return tp / (tp + fp)
 
 
@@ -75,7 +75,7 @@ def recall_score_(y, y_hat, pos_label=1):
     Raises:
     This function should not raise any Exception.
     """
-    tp, fp, tn, fn = calc_params(y, y_hat)
+    tp, fp, tn, fn = calc_params(y, y_hat, pos_label)
     return tp / (tp + fn)
 
 
@@ -92,8 +92,8 @@ def f1_score_(y, y_hat, pos_label=1):
     Raises:
     This function should not raise any Exception.
     """
-    precision = precision_score_(y, y_hat)
-    recall = recall_score_(y, y_hat)
+    precision = precision_score_(y, y_hat, pos_label)
+    recall = recall_score_(y, y_hat, pos_label)
     return (2 * precision * recall) / (precision + recall)
 
 
@@ -129,3 +129,34 @@ if __name__ == "__main__":
     print("sclearn F1-score =", f1_score(y, y_hat))
     # Output:
     # 0.5
+
+    y_hat = np.array(['norminet', 'dog', 'norminet',
+                     'norminet', 'dog', 'dog', 'dog', 'dog'])
+    y = np.array(['dog', 'dog', 'norminet', 'norminet',
+                 'dog', 'norminet', 'dog', 'norminet'])
+    # Accuracy
+    print("my accurancy =", accuracy_score_(y, y_hat, pos_label='dog'))
+    print("sclearn accurancy =", accuracy_score(y, y_hat))
+    # Output:
+    # 0.625
+
+    # # Precision
+    # ## your implementation
+    print("my Precision =", precision_score_(y, y_hat, pos_label='dog'))
+    print("sclearn Precision =", precision_score(y, y_hat, pos_label='dog'))
+    # ## Output:
+    # 0.6
+
+    # # Recall
+    # ## your implementation
+    print("my Recall =", recall_score_(y, y_hat, pos_label='dog'))
+    print("sclearn Recall =", recall_score(y, y_hat, pos_label='dog'))
+    # ## Output:
+    # 0.75
+
+    # # F1-score
+    # ## your implementation
+    print("my F1-score =", f1_score_(y, y_hat, pos_label='dog'))
+    print("sclearn F1-score =", f1_score(y, y_hat, pos_label='dog'))
+    # ## Output:
+    # 0.6666666666666665
