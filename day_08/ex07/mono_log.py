@@ -12,17 +12,28 @@ targets = "solar_system_census_planets.csv"
 features = ["weight", "height", "bone_density"]
 
 
+def _guard_(func):
+    def wrapper(*args, **kwargs):
+        try:
+            return (func(*args, **kwargs))
+        except Exception as e:
+            print(e)
+            return None
+    return wrapper
+
+
+@_guard_
 def norm_data(x):
     x_max = max(x)
     x_min = min(x)
     return x - x_min / (x_max - x_min), x_max, x_min
 
-
+@_guard_
 def plot_model(X, Y, Y_hat, feature):
     plt.title(feature)
     plt.scatter(X, Y, marker='o', label="Origin", alpha=0.5)
     plt.scatter(X, Y_hat, marker='.', label="Prediction")
-    plt.legend(loc='upper left')
+    plt.legend(loc='center right')
     plt.grid()
     plt.show()
 
@@ -64,7 +75,7 @@ if __name__ == "__main__":
     """ Training """
     theta = np.full((4, 1), 0.0)
 
-    my_lreg = MyLR(theta, alpha=0.001, max_iter=1e5)
+    my_lreg = MyLR(theta, alpha=0.001, max_iter=5e5)
     my_lreg.fit_(x_train, y_train)
 
     """ Output """
@@ -75,4 +86,5 @@ if __name__ == "__main__":
         plot_model(x_test[:, i], y_test, y_hat_, feature)
     res = np.zeros(y_test.shape, dtype='int8')
     res[np.where(y_hat_ != y_test)] = 1
-    print("Amount of wrong predictions =",res.sum())
+    print("Correct predictions =", res.shape[0] - res.sum())
+    print("Wrong predictions =", res.sum())

@@ -3,6 +3,17 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 
+def _guard_(func):
+    def wrapper(*args, **kwargs):
+        try:
+            return (func(*args, **kwargs))
+        except Exception as e:
+            print(e)
+            return None
+    return wrapper
+
+
+@_guard_
 def data_spliter(x, y, proportion):
     """Shuffles and splits the dataset (given by x and y) into a training and a test set,
     while respecting the given proportion of examples to be kept in the training set.

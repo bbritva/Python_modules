@@ -12,24 +12,37 @@ targets = "solar_system_census_planets.csv"
 features = ["weight", "height", "bone_density"]
 
 
+def _guard_(func):
+    def wrapper(*args, **kwargs):
+        try:
+            return (func(*args, **kwargs))
+        except Exception as e:
+            print(e)
+            return None
+    return wrapper
+
+
+@_guard_
 def norm_data(x):
     x_max = max(x)
     x_min = min(x)
     return x - x_min / (x_max - x_min), x_max, x_min
 
 
+@_guard_
 def plot_model(X, Y, Y_hat, feature):
     plt.title(feature)
     plt.scatter(X, Y, marker='o', label="Origin", alpha=0.5)
     plt.scatter(X, Y_hat, marker='.', label="Prediction")
-    plt.legend(loc='upper left')
+    plt.legend(loc='center right')
     plt.grid()
     plt.show()
 
 
+@_guard_
 def train_model(x_train, y_train):
     theta = np.full((4, 1), 0.0)
-    my_lreg = MyLR(theta, alpha=0.001, max_iter=1e6)
+    my_lreg = MyLR(theta, alpha=0.001, max_iter=5e5)
     my_lreg.fit_(x_train, y_train)
     return my_lreg
 
@@ -73,8 +86,8 @@ if __name__ == "__main__":
 
     """ Output """
     res = y_hat == y_test[:, 4].reshape((-1, 1))
-    print(res.shape, y_hat.shape, y_test[:, 4].shape)
-    print("Amount of wrong predictions =", res.shape[0] - res.sum())
+    print("Correct predictions =", res.sum())
+    print("Wrong predictions =", res.shape[0] - res.sum())
 
     color = ["red", "green", "blue", "black"]
     plt.xlabel(features[0])
@@ -82,29 +95,33 @@ if __name__ == "__main__":
     for i in range(4):
         predicted = x_test[np.where(y_hat == i)[0]]
         actual = x_test[np.where(y_test[:, 4].reshape((-1, 1)) == i)[0]]
-        plt.scatter(predicted[:,0], predicted[:,1], marker='o', label="Origin", alpha=0.2, c=color[i])
-        plt.scatter(actual[:,0], actual[:,1], marker='.', label="Origin", c=color[i])
+        plt.scatter(predicted[:, 0], predicted[:, 1],
+                    marker='o', label="Origin", alpha=0.2, c=color[i])
+        plt.scatter(actual[:, 0], actual[:, 1],
+                    marker='.', label="Origin", c=color[i])
     plt.grid()
     plt.show()
-
 
     plt.xlabel(features[1])
     plt.ylabel(features[2])
     for i in range(4):
         predicted = x_test[np.where(y_hat == i)[0]]
         actual = x_test[np.where(y_test[:, 4].reshape((-1, 1)) == i)[0]]
-        plt.scatter(predicted[:,1], predicted[:,2], marker='o', label="Origin", alpha=0.5, c=color[i])
-        plt.scatter(actual[:,1], actual[:,2], marker='.', label="Origin", c=color[i])
+        plt.scatter(predicted[:, 1], predicted[:, 2],
+                    marker='o', label="Origin", alpha=0.5, c=color[i])
+        plt.scatter(actual[:, 1], actual[:, 2],
+                    marker='.', label="Origin", c=color[i])
     plt.grid()
     plt.show()
-
 
     plt.xlabel(features[0])
     plt.ylabel(features[2])
     for i in range(4):
         predicted = x_test[np.where(y_hat == i)[0]]
         actual = x_test[np.where(y_test[:, 4].reshape((-1, 1)) == i)[0]]
-        plt.scatter(predicted[:,0], predicted[:,2], marker='o', label="Origin", alpha=0.5, c=color[i])
-        plt.scatter(actual[:,0], actual[:,2], marker='.', label="Origin", c=color[i])
+        plt.scatter(predicted[:, 0], predicted[:, 2],
+                    marker='o', label="Origin", alpha=0.5, c=color[i])
+        plt.scatter(actual[:, 0], actual[:, 2],
+                    marker='.', label="Origin", c=color[i])
     plt.grid()
     plt.show()
