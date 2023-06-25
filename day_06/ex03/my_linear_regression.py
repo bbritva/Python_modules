@@ -27,11 +27,11 @@ class MyLinearRegression():
 
     @_guard_
     def gradient(self, x, y):
-        x_ = (np.c_[np.ones(x.shape[0]), x])
-        return x_.T.dot(x_.dot(self.thetas) - y) / y.shape[0]
+        return self.x_.T.dot(self.x_.dot(self.thetas) - y) / y.shape[0]
 
     @_guard_
     def fit_(self, x, y):
+        self.x_ = (np.c_[np.ones(x.shape[0]), x])
         for i in range(self.max_iter):
             self.thetas = self.thetas - self.alpha * self.gradient(x, y)
         return self.thetas

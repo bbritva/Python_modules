@@ -27,13 +27,13 @@ class MyLinearRegression():
 
     @_guard_
     def gradient(self, x, y):
-        x_ = (np.c_[np.ones(x.shape[0]), x])
-        return x_.T.dot(x_.dot(self.thetas) - y) / y.shape[0]
+        return self.x_.T.dot(self.x_.dot(self.thetas) - y) / y.shape[0]
 
     @_guard_
     def fit_(self, x, y):
         start = time.time()
         cycles = int(self.max_iter / 20)
+        self.x_ = (np.c_[np.ones(x.shape[0]), x])
         print("\r%d%%, time =%5.2fs" % (0, 0), end="")
         for j in range(20):
             for i in range(cycles):
