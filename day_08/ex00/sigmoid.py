@@ -48,3 +48,4 @@ if __name__=="__main__":
     x = np.array([])
     print(sigmoid_(x))
     # Output:
+    # None

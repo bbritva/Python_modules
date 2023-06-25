@@ -1,14 +1,10 @@
 import numpy as np
 import math
-import time
 
 def _guard_(func):
     def wrapper(*args, **kwargs):
         try:
-            start = time.time()
-            res = func(*args, **kwargs)
-            # print(time.time() - start)
-            return res
+            return func(*args, **kwargs)
         except Exception as e:
             print(e)
             return None

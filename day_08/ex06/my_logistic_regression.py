@@ -45,8 +45,6 @@ class MyLogisticRegression():
         for j in range(20):
             for i in range(cycles):
                 self.theta -= self.alpha * self.gradient(x, y)
-                # print("\r%5.4f, %5.4f, %5.4f, %5.4f" % (self.theta[0], self.theta[1], self.theta[2], self.theta[3] ), end="")
-            # print("")
             now = time.time() - start
             print("\r%d%%, time = %5.2fs" % ((j + 1) * 5, now), end="")
         print("")
