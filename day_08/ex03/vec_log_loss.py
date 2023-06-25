@@ -44,8 +44,7 @@ def vec_log_loss_(y, y_hat, eps=1e-15):
     This function should not raise any Exception.
     """
     ones = np.ones(y.shape)
-    y_hat += eps
-    return float((y.T.dot(np.log(y_hat)) + (ones - y).T.dot(np.log(ones - y_hat)))) / -y.shape[0]
+    return float((y.T.dot(np.log(y_hat + eps)) + (ones - y).T.dot(np.log(ones - y_hat + eps)))) / -y.shape[0]
 
 if __name__ == "__main__":
     # Example 1:
