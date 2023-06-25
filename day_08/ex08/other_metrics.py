@@ -44,7 +44,7 @@ def accuracy_score_(y, y_hat, pos_label=1):
     tp, fp, tn, fn = calc_params(y, y_hat, pos_label)
     return (tp + tn) / (tp + fp + tn + fn)
 
-
+@_guard_
 def precision_score_(y, y_hat, pos_label=1):
     """
     Compute the precision score.
@@ -61,7 +61,7 @@ def precision_score_(y, y_hat, pos_label=1):
     tp, fp, tn, fn = calc_params(y, y_hat, pos_label)
     return tp / (tp + fp)
 
-
+@_guard_
 def recall_score_(y, y_hat, pos_label=1):
     """
     Compute the recall score.
@@ -78,7 +78,7 @@ def recall_score_(y, y_hat, pos_label=1):
     tp, fp, tn, fn = calc_params(y, y_hat, pos_label)
     return tp / (tp + fn)
 
-
+@_guard_
 def f1_score_(y, y_hat, pos_label=1):
     """
     Compute the f1 score.
