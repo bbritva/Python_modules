@@ -22,7 +22,8 @@ def l2(theta):
     Raises:
     This function should not raise any Exception.
     """
-    theta_ = np.zeros(theta.shape)[1:] = theta[1:]
+    theta_ = np.zeros(theta.shape)
+    theta_[1:] = theta[1:]
     return float(theta_.T.dot(theta_))
 
 
