@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import pickle 
 
 from polynomial_model import add_polynomial_features
-from mylinearregression import MyLinearRegression as MyLR
+from ridge import MyRidge as MyLR
 from data_spliter import data_spliter
 
 
@@ -22,9 +22,8 @@ def plot_model(X, Y, Y_hat, feature, power):
     plt.show()
 
 
-def poly_multivar_processing(power, x_train, x_test, y_train, y_test, thetas):
-    my_lreg = MyLR(thetas)
-    x_train_ = add_polynomial_features(x_train, power)
+def poly_multivar_processing(power, x_test, y_test, theta):
+    my_lreg = MyLR(theta)
     x_test_ = add_polynomial_features(x_test, power)
     y_hat = my_lreg.predict_(x_test_)
     for i in range(len(features)):
@@ -33,7 +32,7 @@ def poly_multivar_processing(power, x_train, x_test, y_train, y_test, thetas):
 
 if __name__ == "__main__":
     try:
-        with open("model_long.pickle", 'rb') as my_file:
+        with open("model.pickle", 'rb') as my_file:
             models_data = pickle.load(my_file)
         max_x = models_data["max_x"]
     except KeyError:
@@ -51,10 +50,9 @@ if __name__ == "__main__":
     x_train, x_test, y_train, y_test = data_spliter(
         data[["weight", "prod_distance", "time_delivery"]], data[["target"]], 0.8)
     for i in range(3):
-        x_train[:, i] /= max_x[i]
         x_test[:, i] /= max_x[i]
 
     for i in (1, 2, 3, 4):
-        poly_multivar_processing(i, x_train, x_test, y_train, y_test, models_data[i]["thetas"])
+        poly_multivar_processing(i, x_test, y_test, models_data[i]["theta"])
         print("MSE for power %d = %e" % (i, models_data[i]["mse"]))
     

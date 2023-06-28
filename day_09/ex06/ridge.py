@@ -37,8 +37,8 @@ class MyRidge(MyLR):
     @_guard_
     def gradient(self, x, y):
         self.theta_[1:] = self.theta[1:]
-        y_hat = 1 / (1 + math.e ** -(self.x_.dot(self.theta)))
-        return (self.x_.T.dot(y_hat - y) + self.lambda_ * self.theta_) / y.shape[0]
+        res = self.x_.T.dot(self.x_.dot(self.theta) - y) + self.lambda_ * self.theta_
+        return res / x.shape[0]
 
     @_guard_
     def fit_(self, x, y):

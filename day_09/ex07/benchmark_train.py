@@ -3,25 +3,26 @@ import pandas as pd
 import pickle 
 
 from polynomial_model import add_polynomial_features
-from mylinearregression import MyLinearRegression as MyLR
+from ridge import MyRidge as MyLR
 from data_spliter import data_spliter
 
 filename = "space_avocado.csv"
 features = ["weight", "prod_distance", "time_delivery"]
 poly_mse = {}
+# max_iter = 5e6
+max_iter = 1e4
+alpha = .1
 
-def poly_multivar_processing(power, x_train, x_test, y_train, y_test):
-    thetas = np.zeros(((3 * power + 1), 1))
-    alpha = .1
-    max_iter = 1e4
-    my_lreg = MyLR(thetas, alpha, max_iter)
+def poly_multivar_processing(power, x_train, x_test, y_train, y_test, lambda_):
+    theta = np.zeros(((3 * power + 1), 1))
+    my_lreg = MyLR(theta, alpha, max_iter, lambda_)
     x_train_ = add_polynomial_features(x_train, power)
     x_test_ = add_polynomial_features(x_test, power)
     my_lreg.fit_(x_train_, y_train)
     y_hat = my_lreg.predict_(x_test_)
-    poly_mse[power] = {
+    poly_mse[power][lambda_] = {
         "mse" : my_lreg.mse_(y_test, y_hat),
-        "thetas" : my_lreg.thetas
+        "theta" : my_lreg.theta
     }
     print("MSE for power %d = %e" % (power, poly_mse[power]["mse"]))
 
@@ -52,7 +53,8 @@ if __name__=="__main__":
     poly_mse["max_x"] = max_x
     
     for i in range(1, 5):
-        poly_multivar_processing(i, x_train, x_test, y_train, y_test)
+        for j in range(5):
+            poly_multivar_processing(i, x_train, x_test, y_train, y_test, j / 5)
 
     # print(poly_mse)
     with open("model.pickle", 'wb') as my_file:

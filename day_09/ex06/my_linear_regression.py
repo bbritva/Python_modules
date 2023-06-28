@@ -39,6 +39,7 @@ class MyLinearRegression():
 
     @_guard_
     def gradient(self, x, y):
+        self.theta_[1:] = self.theta[1:]
         return self.x_.T.dot(self.x_.dot(self.theta) - y) / y.shape[0]
 
     @_guard_
@@ -52,6 +53,7 @@ class MyLinearRegression():
                 self.theta -= self.alpha * self.gradient(x, y)
             now = time.time() - start
             print("\r%d%%, time =%5.2fs" % ((j + 1) * 5, now), end="")
+            # print(self.theta)
         print("")
         return self.theta
 
@@ -62,3 +64,8 @@ class MyLinearRegression():
     @_guard_
     def loss_elem_(self, y, y_hat):
         return (y - y_hat) ** 2
+
+    @staticmethod
+    @_guard_
+    def mse_(y, y_hat):
+        return float((y_hat - y).T.dot((y_hat - y))) / (y.shape[0])
