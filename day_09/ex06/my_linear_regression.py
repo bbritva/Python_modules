@@ -11,17 +11,6 @@ def _guard_(func):
             return None
     return wrapper
 
-
-def _guard_(func):
-    def wrapper(*args, **kwargs):
-        try:
-            return (func(*args, **kwargs))
-        except Exception as e:
-            print(e)
-            return None
-    return wrapper
-
-
 class MyLinearRegression():
     """
     Description:
@@ -52,7 +41,7 @@ class MyLinearRegression():
             for i in range(cycles):
                 self.theta -= self.alpha * self.gradient(x, y)
             now = time.time() - start
-            print("\r%d%%, time =%5.2fs" % ((j + 1) * 5, now), end="")
+            print("\r%d%%, time =%6.2fs" % ((j + 1) * 5, now), end="")
             # print(self.theta)
         print("")
         return self.theta
