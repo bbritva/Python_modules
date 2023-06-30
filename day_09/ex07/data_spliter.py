@@ -11,7 +11,6 @@ def data_spliter(x):
     This function should not raise any Exception.
     """
     try:
-        print(type(x))
         np.random.shuffle(x)
         limit_train = int(0.8 * x.shape[0])
         limit_cv = x.shape[0] - int(0.1 * x.shape[0])

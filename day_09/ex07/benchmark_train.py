@@ -11,8 +11,8 @@ features = ["weight", "prod_distance", "time_delivery"]
 results = {}
 models = {1: {}, 2: {}, 3: {}, 4: {}}
 # max_iter = 1e6
-max_iter = 1e4
-alpha = .01
+max_iter = 1e5
+alpha = .1
 
 def train_model(train_set, power, lambda_):
     theta = np.zeros(((3 * power + 1), 1))
@@ -65,24 +65,24 @@ if __name__ == "__main__":
         except FileNotFoundError:
             exit()
 
-    """ Split and normalize data"""
-    train_set, cv_set, test_set = data_spliter(np.array(
-        data[["weight", "prod_distance", "time_delivery", "target"]]))
+    """ Normalize data"""
+    data = np.array(data[["weight", "prod_distance", "time_delivery", "target"]])
+    max_x = np.zeros((data.shape[1]))
+    min_x = np.zeros((data.shape[1]))
+    for i in range(data.shape[1]):
+        data[:,i], max_x[i], min_x[i] = norm_data(data[:, i])
+
+
+    train_set, cv_set, test_set = data_spliter(data)
     print(train_set.shape, cv_set.shape, test_set.shape)
-    max_x = [0., 0., 0.]
-    min_x = [0., 0., 0.]
-    for i in range(len(features)):
-        train_set[:, i], max_x[i], min_x[i] = norm_data(train_set[:, i])
-        cv_set[:, i] = (cv_set[:, i] - min_x[i]) / (max_x[i] - min_x[i])
-        test_set[:, i] = (test_set[:, i] - min_x[i]) / (max_x[i] - min_x[i])
 
     print(np.max(train_set[:, :3]), np.max(
         cv_set[:, :3]), np.max(test_set[:, :3]))
     print(np.max(train_set[:, 3]), np.max(
         cv_set[:, 3]), np.max(test_set[:, 3]))
-    # np.savetxt("../resources/tmp/train_set.csv", train_set, delimiter=",")
-    # np.savetxt("../resources/tmp/cv_set.csv", cv_set, delimiter=",")
-    # np.savetxt("../resources/tmp/test_set.csv", test_set, delimiter=",")
+    np.savetxt("../resources/tmp/train_set.csv", train_set, delimiter=",")
+    np.savetxt("../resources/tmp/cv_set.csv", cv_set, delimiter=",")
+    np.savetxt("../resources/tmp/test_set.csv", test_set, delimiter=",")
 
     train_models(train_set)
     best_power, best_lambda, best_mse = validate_models(cv_set)
@@ -92,7 +92,6 @@ if __name__ == "__main__":
     results["best_power"] = best_power
     results["best_lambda"] = best_lambda
 
-    print(results)
     with open("model.pickle", 'wb') as my_file:
         pickle.dump(results, my_file)
         print("All results saved =)")
