@@ -10,43 +10,62 @@ data_file = "solar_system_census.csv"
 target_file = "solar_system_census_planets.csv"
 features = ["weight", "height", "bone_density"]
 results = {}
-models = {1: {}, 2: {}, 3: {}, 4: {}}
+models = {0.0: {}, 0.2: {}, 0.4: {}, 0.6: {}, 0.8: {}, 1.0: {}}
 # max_iter = 1e6
 max_iter = 1e5
-alpha = .1
+alpha = .01
 
 
-def train_model(train_set, power, lambda_):
-    theta = np.zeros(((3 * power + 1), 1))
-    model = MyLR(theta, alpha, max_iter, lambda_)
-
-    x_train_ = add_polynomial_features(train_set[:, :-1], power)
-    model.fit_(x_train_, train_set[:, -1].reshape((-1, 1)))
-    models[power][lambda_] = model.theta
-    print("Model with power %d, lambda %f trained" %
-          (power, lambda_))
+def calc_params(y, y_hat, pos_label):
+    tp = len(y[(y == pos_label) & (y_hat == pos_label)])
+    fp = len(y[(y != pos_label) & (y_hat == pos_label)])
+    tn = len(y[(y != pos_label) & (y_hat != pos_label)])
+    fn = len(y[(y == pos_label) & (y_hat != pos_label)])
+    return tp, fp, tn, fn
 
 
-def train_models(train_set):
-    for i in range(1, 5):  # powers
-        for j in range(6):  # lambdas
-            train_model(train_set, i, j / 5)
+def f1_score_(y, y_hat, pos_label=1):
+    """ Compute the f1 score """
+    try:
+        tp, fp, tn, fn = calc_params(y, y_hat, pos_label)
+        precision = tp / (tp + fp)
+        recall = tp / (tp + fn)
+        return (2 * precision * recall) / (precision + recall)
+    except:
+        return None
+
+
+def train_model(x_train, y_train):
+    theta = np.zeros((10, 1))
+    my_lreg = MyLR(theta, alpha=alpha, max_iter=max_iter)
+    my_lreg.fit_(x_train, y_train)
+    return my_lreg
+
+
+def train_models(X, Y, lambda_):
+    model = []
+    y_hat = []
+    for i in range(4):
+        model.append(train_model(X, Y[:, i].reshape((-1, 1))))
+        # y_hat.append(model[i].predict_(x_test))
+    # y_hat = np.c_[y_hat[0], y_hat[1], y_hat[2], y_hat[3]]
+    # y_hat = np.argmax(y_hat, axis=1).reshape((-1, 1))
+    # f1_score = f1_score_(y, y_hat)
+    models[lambda_] = model
+    print("Model with lambda %f trained" % (lambda_))
 
 
 def validate_models(cv_set):
-    best_power = 1
     best_lambda = 0
     best_mse = 0
-    for i in range(1, 5):  # powers
-        x_cv_ = add_polynomial_features(cv_set[:, :-1], i)
-        for j in range(6):  # lambdas
-            model = MyLR(models[i][j/5], alpha, max_iter, j/5)
-            y_hat = model.predict_(x_cv_)
-            mse = MyLR.mse_(cv_set[:, -1].reshape((-1, 1)), y_hat)
-            if mse < best_mse or best_mse == 0:
-                best_mse = mse
-                best_power = i
-                best_lambda = j / 5
+    for j in range(6):  # lambdas
+        model = MyLR(models[i][j/5], alpha, max_iter, j/5)
+        y_hat = model.predict_(x_cv_)
+        mse = MyLR.mse_(cv_set[:, -1].reshape((-1, 1)), y_hat)
+        if mse < best_mse or best_mse == 0:
+            best_mse = mse
+            best_power = i
+            best_lambda = j / 5
     print(best_power, best_lambda, best_mse)
     return (best_power, best_lambda, best_mse)
 
@@ -68,27 +87,34 @@ if __name__ == "__main__":
             data_targets = pd.read_csv("../resources/" + target_file)
         except FileNotFoundError:
             exit()
-    data = np.c_[data_features[features], data_targets["Origin"]]
+
+    planets = np.array(data_targets["Origin"]).reshape((-1, 1)).astype(np.int8)
+    Y = np.zeros((planets.shape[0], 4), dtype='int8')
+    for i, zipcode in enumerate(planets):
+        Y[i][zipcode] = 1
+    Y = np.c_[Y, planets]
+    X = np.array(data_features[features])
 
     """ Normalize data"""
-    max_x = np.zeros((data.shape[1]))
-    min_x = np.zeros((data.shape[1]))
-    for i in range(data.shape[1]):
-        data[:, i], max_x[i], min_x[i] = norm_data(data[:, i])
+    max_x = np.zeros((X.shape[1]))
+    min_x = np.zeros((X.shape[1]))
+    for i in range(X.shape[1]):
+        X[:, i], max_x[i], min_x[i] = norm_data(X[:, i])
 
-    train_set, cv_set, test_set = data_spliter(data)
+    X = add_polynomial_features(X, 3)
+
+    train_set, cv_set, test_set = data_spliter(np.c_[X, Y])
     print(train_set.shape, cv_set.shape, test_set.shape)
-    exit()
-    print(np.max(train_set[:, :3]), np.max(
-        cv_set[:, :3]), np.max(test_set[:, :3]))
-    print(np.max(train_set[:, 3]), np.max(
-        cv_set[:, 3]), np.max(test_set[:, 3]))
-    np.savetxt("../resources/tmp/train_set.csv", train_set, delimiter=",")
-    np.savetxt("../resources/tmp/cv_set.csv", cv_set, delimiter=",")
-    np.savetxt("../resources/tmp/test_set.csv", test_set, delimiter=",")
+    np.savetxt("../resources/tmp/ssc_train_set.csv", train_set, delimiter=",")
+    np.savetxt("../resources/tmp/ssc_cv_set.csv", cv_set, delimiter=",")
+    np.savetxt("../resources/tmp/ssc_test_set.csv", test_set, delimiter=",")
 
-    train_models(train_set)
+    """ Training """
+    for j in range(6):
+        train_models(train_set[:, :-5], train_set[:, -5:], j / 5)
+
     best_power, best_lambda, best_mse = validate_models(cv_set)
+    exit()
     results["models"] = models
     results["max_x"] = max_x
     results["min_x"] = min_x
