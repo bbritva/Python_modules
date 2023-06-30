@@ -11,8 +11,7 @@ target_file = "solar_system_census_planets.csv"
 features = ["weight", "height", "bone_density"]
 results = {}
 models = {0.0: {}, 0.2: {}, 0.4: {}, 0.6: {}, 0.8: {}, 1.0: {}}
-# max_iter = 1e6
-max_iter = 1e4
+max_iter = 5e5
 alpha = .01
 
 
@@ -35,9 +34,9 @@ def f1_score_(y, y_hat, pos_label=1):
         return None
 
 
-def train_model(x_train, y_train):
+def train_model(x_train, y_train, lambda_):
     theta = np.zeros((10, 1))
-    my_lreg = MyLR(theta, alpha=alpha, max_iter=max_iter)
+    my_lreg = MyLR(theta, alpha=alpha, max_iter=max_iter, penalty='l2', lambda_=lambda_)
     my_lreg.fit_(x_train, y_train)
     return my_lreg
 
@@ -46,13 +45,9 @@ def train_models(X, Y, lambda_):
     model = []
     y_hat = []
     for i in range(4):
-        model.append(train_model(X, Y[:, i].reshape((-1, 1))))
-        # y_hat.append(model[i].predict_(x_test))
-    # y_hat = np.c_[y_hat[0], y_hat[1], y_hat[2], y_hat[3]]
-    # y_hat = np.argmax(y_hat, axis=1).reshape((-1, 1))
-    # f1_score = f1_score_(y, y_hat)
+        model.append(train_model(X, Y[:, i].reshape((-1, 1)), lambda_))
     models[lambda_] = model
-    print("Model with lambda %f trained" % (lambda_))
+    print("Models with lambda %f trained" % (lambda_))
 
 
 def validate_models(X, Y):
@@ -64,11 +59,18 @@ def validate_models(X, Y):
         for mdl in model:
             y_hat.append(mdl.predict_(X))
         y_hat = np.c_[y_hat[0], y_hat[1], y_hat[2], y_hat[3]]
+        print(y_hat)
         y_hat = np.argmax(y_hat, axis=1).reshape((-1, 1))
         f1_score = f1_score_(Y, y_hat)
         if f1_score < best_f1 or best_f1 == 0:
             best_f1 = f1_score
             best_lambda = j / 5
+        
+        """ Output """
+        res = y_hat == Y
+        # print("Correct predictions =", res.sum())
+        # print("Wrong predictions =", res.shape[0] - res.sum())
+        print(f1_score)
     print(best_lambda, best_f1)
     return (best_lambda, best_f1)
 
@@ -117,11 +119,9 @@ if __name__ == "__main__":
         train_models(train_set[:, :-5], train_set[:, -5:-1], j / 5)
 
     best_lambda, best_mse = validate_models(cv_set[:, :-5], cv_set[:, -1:])
-    exit()
     results["models"] = models
     results["max_x"] = max_x
     results["min_x"] = min_x
-    results["best_power"] = best_power
     results["best_lambda"] = best_lambda
 
     with open("model.pickle", 'wb') as my_file:

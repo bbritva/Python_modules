@@ -36,12 +36,12 @@ class MyLinearRegression():
         start = time.time()
         cycles = int(self.max_iter / 20)
         self.x_ = (np.c_[np.ones(x.shape[0]), x])
-        print("\r%d%%, time =%5.2fs" % (0, 0), end="")
+        print("\r%3d%%, time =%5.2fs" % (0, 0), end="")
         for j in range(20):
             for i in range(cycles):
                 self.theta -= self.alpha * self.gradient(x, y)
             now = time.time() - start
-            print("\r%d%%, time =%6.2fs" % ((j + 1) * 5, now), end="")
+            print("\r%3d%%, time =%6.2fs" % ((j + 1) * 5, now), end="")
             # print(self.theta)
         print("")
         return self.theta
