@@ -55,7 +55,7 @@ def vec_reg_logistic_grad(y, x, theta, lambda_):
     theta_[1:] = theta[1:]
     x_ = np.c_[np.ones(x.shape[0]), x]
     y_hat = 1 / (1 + math.e ** -(x_.dot(theta)))
-    return (x_.T.dot(y_hat - y) + + lambda_ * theta_)/ y.shape[0]
+    return (x_.T.dot(y_hat - y) + lambda_ * theta_)/ y.shape[0]
 
 
 
