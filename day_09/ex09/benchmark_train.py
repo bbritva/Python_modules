@@ -12,7 +12,7 @@ features = ["weight", "height", "bone_density"]
 results = {}
 models = {0.0: {}, 0.2: {}, 0.4: {}, 0.6: {}, 0.8: {}, 1.0: {}}
 # max_iter = 1e6
-max_iter = 1e5
+max_iter = 1e4
 alpha = .01
 
 
@@ -55,19 +55,22 @@ def train_models(X, Y, lambda_):
     print("Model with lambda %f trained" % (lambda_))
 
 
-def validate_models(cv_set):
+def validate_models(X, Y):
     best_lambda = 0
-    best_mse = 0
+    best_f1 = 0
     for j in range(6):  # lambdas
-        model = MyLR(models[i][j/5], alpha, max_iter, j/5)
-        y_hat = model.predict_(x_cv_)
-        mse = MyLR.mse_(cv_set[:, -1].reshape((-1, 1)), y_hat)
-        if mse < best_mse or best_mse == 0:
-            best_mse = mse
-            best_power = i
+        model = models[j/5]
+        y_hat = []
+        for mdl in model:
+            y_hat.append(mdl.predict_(X))
+        y_hat = np.c_[y_hat[0], y_hat[1], y_hat[2], y_hat[3]]
+        y_hat = np.argmax(y_hat, axis=1).reshape((-1, 1))
+        f1_score = f1_score_(Y, y_hat)
+        if f1_score < best_f1 or best_f1 == 0:
+            best_f1 = f1_score
             best_lambda = j / 5
-    print(best_power, best_lambda, best_mse)
-    return (best_power, best_lambda, best_mse)
+    print(best_lambda, best_f1)
+    return (best_lambda, best_f1)
 
 
 def norm_data(x):
@@ -111,9 +114,9 @@ if __name__ == "__main__":
 
     """ Training """
     for j in range(6):
-        train_models(train_set[:, :-5], train_set[:, -5:], j / 5)
+        train_models(train_set[:, :-5], train_set[:, -5:-1], j / 5)
 
-    best_power, best_lambda, best_mse = validate_models(cv_set)
+    best_lambda, best_mse = validate_models(cv_set[:, :-5], cv_set[:, -1:])
     exit()
     results["models"] = models
     results["max_x"] = max_x
