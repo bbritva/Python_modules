@@ -11,36 +11,53 @@ target_file = "solar_system_census_planets.csv"
 features = ["weight", "height", "bone_density"]
 results = {}
 models = {0.0: {}, 0.2: {}, 0.4: {}, 0.6: {}, 0.8: {}, 1.0: {}}
-max_iter = 5e5
-alpha = .01
+max_iter = 1e6
+alpha = .1
 
 
-def calc_params(y, y_hat, pos_label):
-    tp = len(y[(y == pos_label) & (y_hat == pos_label)])
-    fp = len(y[(y != pos_label) & (y_hat == pos_label)])
-    tn = len(y[(y != pos_label) & (y_hat != pos_label)])
-    fn = len(y[(y == pos_label) & (y_hat != pos_label)])
+def _guard_(func):
+    def wrapper(*args, **kwargs):
+        try:
+            return (func(*args, **kwargs))
+        except Exception as e:
+            print(e)
+            return None
+    return wrapper
+
+
+@_guard_
+def calc_params(y, y_hat):
+    tp = 0
+    fp = 0
+    tn = 0
+    fn = 0
+    for pos_label in range(4):
+        tp += len(y[(y == pos_label) & (y_hat == pos_label)])
+        fp += len(y[(y != pos_label) & (y_hat == pos_label)])
+        tn += len(y[(y != pos_label) & (y_hat != pos_label)])
+        fn += len(y[(y == pos_label) & (y_hat != pos_label)])
     return tp, fp, tn, fn
 
 
-def f1_score_(y, y_hat, pos_label=1):
+@_guard_
+def f1_score_(y, y_hat):
     """ Compute the f1 score """
-    try:
-        tp, fp, tn, fn = calc_params(y, y_hat, pos_label)
-        precision = tp / (tp + fp)
-        recall = tp / (tp + fn)
-        return (2 * precision * recall) / (precision + recall)
-    except:
-        return None
+    tp, fp, tn, fn = calc_params(y, y_hat)
+    precision = tp / (tp + fp)
+    recall = tp / (tp + fn)
+    return (2 * precision * recall) / (precision + recall)
 
 
+@_guard_
 def train_model(x_train, y_train, lambda_):
     theta = np.zeros((10, 1))
-    my_lreg = MyLR(theta, alpha=alpha, max_iter=max_iter, penalty='l2', lambda_=lambda_)
+    my_lreg = MyLR(theta, alpha=alpha, max_iter=max_iter,
+                   penalty='l2', lambda_=lambda_)
     my_lreg.fit_(x_train, y_train)
     return my_lreg
 
 
+@_guard_
 def train_models(X, Y, lambda_):
     model = []
     y_hat = []
@@ -50,6 +67,7 @@ def train_models(X, Y, lambda_):
     print("Models with lambda %f trained" % (lambda_))
 
 
+@_guard_
 def validate_models(X, Y):
     best_lambda = 0
     best_f1 = 0
@@ -59,29 +77,31 @@ def validate_models(X, Y):
         for mdl in model:
             y_hat.append(mdl.predict_(X))
         y_hat = np.c_[y_hat[0], y_hat[1], y_hat[2], y_hat[3]]
-        print(y_hat)
         y_hat = np.argmax(y_hat, axis=1).reshape((-1, 1))
         f1_score = f1_score_(Y, y_hat)
-        if f1_score < best_f1 or best_f1 == 0:
+        print(j/5, f1_score)
+        if f1_score > best_f1:
             best_f1 = f1_score
             best_lambda = j / 5
-        
+
         """ Output """
         res = y_hat == Y
         # print("Correct predictions =", res.sum())
         # print("Wrong predictions =", res.shape[0] - res.sum())
-        print(f1_score)
+        # print(f1_score)
     print(best_lambda, best_f1)
     return (best_lambda, best_f1)
 
 
+@_guard_
 def norm_data(x):
     x_max = max(x)
     x_min = min(x)
     return (x - x_min) / (x_max - x_min), x_max, x_min
 
 
-if __name__ == "__main__":
+@_guard_
+def main():
     """ Read data """
     try:
         data_features = pd.read_csv("day_08/resources/" + data_file)
@@ -127,3 +147,6 @@ if __name__ == "__main__":
     with open("model.pickle", 'wb') as my_file:
         pickle.dump(results, my_file)
         print("All results saved =)")
+
+if __name__ == "__main__":
+    main()
