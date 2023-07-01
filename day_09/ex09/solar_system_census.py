@@ -13,6 +13,7 @@ features = ["weight", "height", "bone_density"]
 max_iter = 1e4
 alpha = .1
 
+
 def _guard_(func):
     def wrapper(*args, **kwargs):
         try:
@@ -29,7 +30,7 @@ def train_model(x_train, y_train, lambda_):
     my_lreg = MyLR(theta, alpha=alpha, max_iter=max_iter,
                    penalty='l2', lambda_=lambda_)
     my_lreg.fit_(x_train, y_train)
-    return my_lreg
+    return my_lreg.theta
 
 
 @_guard_
@@ -56,50 +57,34 @@ def f1_score_(y, y_hat):
 
 
 @_guard_
-def train_models(train_data, test_data, lambda_):
-    model = []
+def get_predictions(thetas, data):
     y_hat = []
+    for theta in thetas:
+        mdl = MyLR(theta)
+        y_hat.append(mdl.predict_(data[:, :-5]))
+    y_hat = np.c_[y_hat[0], y_hat[1], y_hat[2], y_hat[3]]
+    y_hat = np.argmax(y_hat, axis=1).reshape((-1, 1))
+    return y_hat
+
+
+@_guard_
+def train_models(train_data, test_data, lambda_):
+    thetas = []
     X = train_data[:, :-5]
     Y = train_data[:, -5:-1]
     for i in range(4):
-        model.append(train_model(X, Y[:, i].reshape((-1, 1)), lambda_))
+        thetas.append(train_model(X, Y[:, i].reshape((-1, 1)), lambda_))
     print("Models with lambda %f trained" % (lambda_))
-    for mdl in model:
-        y_hat.append(mdl.predict_(X))
-    y_hat = np.c_[y_hat[0], y_hat[1], y_hat[2], y_hat[3]]
-    y_hat = np.argmax(y_hat, axis=1).reshape((-1, 1))
-    f1_score = f1_score_(Y, y_hat)
+    y_hat = get_predictions(thetas, test_data)
+    f1_score = f1_score_(test_data[:, -5:-1], y_hat)
     print(lambda_, f1_score)
-    return model
-
-
-@_guard_
-def plot_model(X, Y, Y_hat, feature, lambda_):
-    plt.title(feature + " with lambda = " + str(lambda_))
-    plt.scatter(X, Y, marker='o', label="Origin", alpha=0.5)
-    plt.scatter(X, Y_hat, marker='.', label="Prediction")
-    plt.legend(loc='center right')
-    plt.grid()
-    plt.show()
-
-@_guard_
-def poly_multivar_processing(x_test, y_test, thetas, lambda_):
-    y_hat = []
-    for theta in thetas:
-        mdl = MyLR(theta, alpha=alpha, max_iter=max_iter,
-                penalty='l2', lambda_=lambda_)
-        y_hat.append(mdl.predict_(x_test))
-    y_hat = np.c_[y_hat[0], y_hat[1], y_hat[2], y_hat[3]]
-    y_hat = np.argmax(y_hat, axis=1).reshape((-1, 1))
-    for i in range(len(features)):
-        plot_model(x_test[:, i], y_test, y_hat, features[i], lambda_)
-
-    print("MSE for power %d lambda %f = %e" % (lambda_, MyLR.mse_(y_test, y_hat)))
+    return thetas
 
 
 @_guard_
 def main():
     try:
+        # with open("day_09/ex09/model.pickle", 'rb') as my_file:
         with open("model.pickle", 'rb') as my_file:
             models_data = pickle.load(my_file)
     except KeyError:
@@ -107,9 +92,9 @@ def main():
     """ Read data """
     try:
         test_data = np.genfromtxt(
-            "day_07/resources/tmp/" + test_file, delimiter=',')
+            "day_09/resources/tmp/" + test_file, delimiter=',')
         train_data = np.genfromtxt(
-            "day_07/resources/tmp/" + train_file, delimiter=',')
+            "day_09/resources/tmp/" + train_file, delimiter=',')
     except FileNotFoundError:
         try:
             test_data = np.genfromtxt(
@@ -124,11 +109,48 @@ def main():
     max_x = models_data["max_x"]
     min_x = models_data["min_x"]
 
-    train_models(train_data, test_data, best_lambda)
+    best_thetas = train_models(train_data, test_data, best_lambda)
 
-    for j in range(6):
-        poly_multivar_processing(
-            test_data[:, :-5], test_data[:,-5:-1].reshape((-1, 1)), thetas[j / 5], j / 5)
+    y_hat = get_predictions(best_thetas, test_data)
+    x_test = test_data[:, :-5]
+    y_test = test_data[:, -5:]
+    color = ["red", "green", "blue", "black"]
+
+    plt.xlabel(features[0])
+    plt.ylabel(features[1])
+    for i in range(4):
+        predicted = x_test[np.where(y_hat == i)[0]]
+        actual = x_test[np.where(y_test[:, 4].reshape((-1, 1)) == i)[0]]
+        plt.scatter(predicted[:, 0], predicted[:, 1],
+                    marker='o', label="Origin", alpha=0.2, c=color[i])
+        plt.scatter(actual[:, 0], actual[:, 1],
+                    marker='.', label="Origin", c=color[i])
+    plt.grid()
+    plt.show()
+
+    plt.xlabel(features[1])
+    plt.ylabel(features[2])
+    for i in range(4):
+        predicted = x_test[np.where(y_hat == i)[0]]
+        actual = x_test[np.where(y_test[:, 4].reshape((-1, 1)) == i)[0]]
+        plt.scatter(predicted[:, 1], predicted[:, 2],
+                    marker='o', label="Origin", alpha=0.5, c=color[i])
+        plt.scatter(actual[:, 1], actual[:, 2],
+                    marker='.', label="Origin", c=color[i])
+    plt.grid()
+    plt.show()
+
+    plt.xlabel(features[0])
+    plt.ylabel(features[2])
+    for i in range(4):
+        predicted = x_test[np.where(y_hat == i)[0]]
+        actual = x_test[np.where(y_test[:, 4].reshape((-1, 1)) == i)[0]]
+        plt.scatter(predicted[:, 0], predicted[:, 2],
+                    marker='o', label="Origin", alpha=0.5, c=color[i])
+        plt.scatter(actual[:, 0], actual[:, 2],
+                    marker='.', label="Origin", c=color[i])
+    plt.grid()
+    plt.show()
 
 
 if __name__ == "__main__":
