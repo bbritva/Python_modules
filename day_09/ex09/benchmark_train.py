@@ -11,7 +11,7 @@ target_file = "solar_system_census_planets.csv"
 features = ["weight", "height", "bone_density"]
 results = {}
 models = {0.0: {}, 0.2: {}, 0.4: {}, 0.6: {}, 0.8: {}, 1.0: {}}
-max_iter = 1e6
+max_iter = 1e4
 alpha = .1
 
 
@@ -62,7 +62,7 @@ def train_models(X, Y, lambda_):
     model = []
     y_hat = []
     for i in range(4):
-        model.append(train_model(X, Y[:, i].reshape((-1, 1)), lambda_))
+        model.append(train_model(X, Y[:, i].reshape((-1, 1)), lambda_).theta)
     models[lambda_] = model
     print("Models with lambda %f trained" % (lambda_))
 
@@ -72,9 +72,11 @@ def validate_models(X, Y):
     best_lambda = 0
     best_f1 = 0
     for j in range(6):  # lambdas
-        model = models[j/5]
+        thetas = models[j/5]
         y_hat = []
-        for mdl in model:
+        for theta in thetas:
+            mdl = MyLR(theta, alpha=alpha, max_iter=max_iter,
+                   penalty='l2', lambda_=j/5)
             y_hat.append(mdl.predict_(X))
         y_hat = np.c_[y_hat[0], y_hat[1], y_hat[2], y_hat[3]]
         y_hat = np.argmax(y_hat, axis=1).reshape((-1, 1))

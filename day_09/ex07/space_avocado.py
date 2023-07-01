@@ -59,7 +59,8 @@ if __name__ == "__main__":
     try:
         test_data = np.genfromtxt(
             "day_07/resources/tmp/" + test_file, delimiter=',')
-        train_data = np.genfromtxt("day_07/resources/tmp/" + train_file)
+        train_data = np.genfromtxt(
+            "day_07/resources/tmp/" + train_file, delimiter=',')
     except FileNotFoundError:
         try:
             test_data = np.genfromtxt(
@@ -80,4 +81,4 @@ if __name__ == "__main__":
     for i in (1, 2, 3, 4):
         for j in range(6):
             poly_multivar_processing(
-                i, test_data[:,:-1], test_data[:,-1].reshape((-1,1)), models[i][j / 5], j / 5)
+                i, test_data[:, :-1], test_data[:, -1].reshape((-1, 1)), models[i][j / 5], j / 5)
