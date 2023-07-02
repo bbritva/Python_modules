@@ -10,8 +10,8 @@ from my_logistic_regression import MyLogisticRegression as MyLR
 test_file = "ssc_test_set.csv"
 train_file = "ssc_train_set.csv"
 features = ["weight", "height", "bone_density"]
-max_iter = 1e4
-alpha = .1
+max_iter = 5e3
+alpha = .001
 
 
 def _guard_(func):
@@ -19,7 +19,7 @@ def _guard_(func):
         try:
             return (func(*args, **kwargs))
         except Exception as e:
-            print(e)
+            print(func.__name__ + ': ' + str(e))
             return None
     return wrapper
 
@@ -39,7 +39,7 @@ def calc_params(y, y_hat):
     fp = 0
     tn = 0
     fn = 0
-    for pos_label in range(4):
+    for pos_label in range(1,5):
         tp += len(y[(y == pos_label) & (y_hat == pos_label)])
         fp += len(y[(y != pos_label) & (y_hat == pos_label)])
         tn += len(y[(y != pos_label) & (y_hat != pos_label)])
@@ -51,6 +51,7 @@ def calc_params(y, y_hat):
 def f1_score_(y, y_hat):
     """ Compute the f1 score """
     tp, fp, tn, fn = calc_params(y, y_hat)
+    print(tp, fp, tn, fn)
     precision = tp / (tp + fp)
     recall = tp / (tp + fn)
     return (2 * precision * recall) / (precision + recall)
@@ -68,6 +69,19 @@ def get_predictions(thetas, data):
 
 
 @_guard_
+def get_scores(thetas, data):
+    f1_scores = []
+    for j in range(6):
+        theta = thetas[j/5]
+        y_hat = get_predictions(theta, data)
+        res = y_hat == data[:,-1].reshape((-1,1))
+        print("Correct predictions =", res.sum())
+        print("Wrong predictions =", res.shape[0] - res.sum())
+        f1_scores.append(f1_score_(data[:,-1].reshape(-1,1), y_hat))
+    return f1_scores
+
+
+@_guard_
 def train_models(train_data, test_data, lambda_):
     thetas = []
     X = train_data[:, :-5]
@@ -76,7 +90,7 @@ def train_models(train_data, test_data, lambda_):
         thetas.append(train_model(X, Y[:, i].reshape((-1, 1)), lambda_))
     print("Models with lambda %f trained" % (lambda_))
     y_hat = get_predictions(thetas, test_data)
-    f1_score = f1_score_(test_data[:, -5:-1], y_hat)
+    f1_score = f1_score_(test_data[:,-1].reshape(-1,1), y_hat)
     print(lambda_, f1_score)
     return thetas
 
@@ -88,6 +102,7 @@ def main():
         with open("model.pickle", 'rb') as my_file:
             models_data = pickle.load(my_file)
     except KeyError:
+        print("Data loading error")
         exit()
     """ Read data """
     try:
@@ -95,21 +110,37 @@ def main():
             "day_09/resources/tmp/" + test_file, delimiter=',')
         train_data = np.genfromtxt(
             "day_09/resources/tmp/" + train_file, delimiter=',')
-    except FileNotFoundError:
+    except Exception:
         try:
             test_data = np.genfromtxt(
                 "../resources/tmp/" + test_file, delimiter=',')
             train_data = np.genfromtxt(
                 "../resources/tmp/" + train_file, delimiter=',')
-        except FileNotFoundError:
+        except Exception:
+            print("Data loading error")
             exit()
 
     best_lambda = models_data["best_lambda"]
     thetas = models_data["models"]
     max_x = models_data["max_x"]
     min_x = models_data["min_x"]
-
+    print("Data loaded")
     best_thetas = train_models(train_data, test_data, best_lambda)
+
+    """ Visualize the performance of the different models with a
+    bar plot showing the score of the models given their λ value. """
+
+    lambdas = np.arange(0., 1.2, step=.2)
+    print(lambdas)
+    f1_scores = get_scores(thetas, test_data)
+    print(f1_scores)
+    exit()
+    plt.xlabel("lambda")
+    plt.ylabel("f1_score")
+    plt.plot(lambdas, f1_scores)
+    plt.grid()
+    plt.show()
+
 
     y_hat = get_predictions(best_thetas, test_data)
     x_test = test_data[:, :-5]

@@ -11,8 +11,8 @@ target_file = "solar_system_census_planets.csv"
 features = ["weight", "height", "bone_density"]
 results = {}
 models = {0.0: {}, 0.2: {}, 0.4: {}, 0.6: {}, 0.8: {}, 1.0: {}}
-max_iter = 10e5
-alpha = .01
+max_iter = 5e3
+alpha = .001
 
 
 def _guard_(func):
@@ -20,7 +20,7 @@ def _guard_(func):
         try:
             return (func(*args, **kwargs))
         except Exception as e:
-            print(e)
+            print(func.__name__ + ': ' + str(e))
             return None
     return wrapper
 
@@ -60,11 +60,10 @@ def train_model(x_train, y_train, lambda_):
 @_guard_
 def train_models(X, Y, lambda_):
     model = []
-    y_hat = []
     for i in range(4):
         model.append(train_model(X, Y[:, i].reshape((-1, 1)), lambda_).theta)
     models[lambda_] = model
-    print("Models with lambda %f trained" % (lambda_))
+    print("Models with lambda %.1f trained" % (lambda_))
 
 
 @_guard_
@@ -80,21 +79,16 @@ def validate_models(X, Y):
             y_hat.append(mdl.predict_(X))
         y_hat = np.c_[y_hat[0], y_hat[1], y_hat[2], y_hat[3]]
         y_hat = np.argmax(y_hat, axis=1).reshape((-1, 1))
-        # res = y_hat == Y
-        # print("Correct predictions =", res.sum())
-        # print("Wrong predictions =", res.shape[0] - res.sum())
         f1_score = f1_score_(Y, y_hat)
-        print(j/5, f1_score)
         if f1_score > best_f1:
             best_f1 = f1_score
             best_lambda = j / 5
 
         """ Output """
         res = y_hat == Y
-        # print("Correct predictions =", res.sum())
-        # print("Wrong predictions =", res.shape[0] - res.sum())
-        # print(f1_score)
-    print(best_lambda, best_f1)
+        print("Correct predictions =", res.sum())
+        print("Wrong predictions =", res.shape[0] - res.sum())
+        print(f1_score)
     return (best_lambda, best_f1)
 
 
@@ -111,11 +105,11 @@ def main():
     try:
         data_features = pd.read_csv("day_08/resources/" + data_file)
         data_targets = pd.read_csv("day_08/resources/" + target_file)
-    except FileNotFoundError:
+    except Exception:
         try:
             data_features = pd.read_csv("../resources/" + data_file)
             data_targets = pd.read_csv("../resources/" + target_file)
-        except FileNotFoundError:
+        except Exception:
             exit()
 
     planets = np.array(data_targets["Origin"]).reshape((-1, 1)).astype(np.int8)
@@ -133,8 +127,8 @@ def main():
 
     X = add_polynomial_features(X, 3)
 
+    """ Split and save data """
     train_set, cv_set, test_set = data_spliter(np.c_[X, Y])
-    print(train_set.shape, cv_set.shape, test_set.shape)
     np.savetxt("../resources/tmp/ssc_train_set.csv", train_set, delimiter=",")
     np.savetxt("../resources/tmp/ssc_cv_set.csv", cv_set, delimiter=",")
     np.savetxt("../resources/tmp/ssc_test_set.csv", test_set, delimiter=",")
@@ -143,7 +137,7 @@ def main():
     for j in range(6):
         train_models(train_set[:, :-5], train_set[:, -5:-1], j / 5)
 
-    best_lambda, best_mse = validate_models(cv_set[:, :-5], cv_set[:, -1:])
+    best_lambda, best_f1 = validate_models(cv_set[:, :-5], cv_set[:, -1:])
     results["models"] = models
     results["max_x"] = max_x
     results["min_x"] = min_x
@@ -151,7 +145,7 @@ def main():
 
     with open("model.pickle", 'wb') as my_file:
         pickle.dump(results, my_file)
-        print("All results saved =)")
+        print("All results are saved =)")
 
 if __name__ == "__main__":
     main()

@@ -8,7 +8,7 @@ def _guard_(func):
         try:
             return (func(*args, **kwargs))
         except Exception as e:
-            print(e)
+            print(func.__name__ + ': ' + e)
             return None
     return wrapper
 

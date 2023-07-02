@@ -15,7 +15,6 @@ def data_spliter(x):
         limit_train = int(0.8 * x.shape[0])
         limit_cv = x.shape[0] - int(0.1 * x.shape[0])
         return x[:limit_train,:], x[limit_train:limit_cv,:], x[limit_cv:,:]
-    except Exception as e:
-        print(e)
+    except Exception:
         return None
 
