@@ -16,6 +16,17 @@ max_iter = 1e6
 alpha = .1
 
 
+def _guard_(func):
+    def wrapper(*args, **kwargs):
+        try:
+            return (func(*args, **kwargs))
+        except Exception as e:
+            print(e)
+            return None
+    return wrapper
+
+
+@_guard_
 def train_model(train_set, power, lambda_):
     theta = np.zeros(((3 * power + 1), 1))
     model = MyLR(theta, alpha, max_iter, lambda_)
@@ -27,20 +38,23 @@ def train_model(train_set, power, lambda_):
           (power, lambda_))
 
 
+@_guard_
 def train_models(train_set):
     for i in range(1, 5):  # powers
         for j in range(6):  # lambdas
             train_model(train_set, i, j / 5)
 
 
+@_guard_
 def plot_mse(power, data):
-    data = data[np.where(data[:,0] == power)]
+    data = data[np.where(data[:, 0] == power)]
     plt.title("Mse with power = " + str(power))
-    plt.plot(data[:, 1], data[:,2], marker='o')
+    plt.plot(data[:, 1], data[:, 2], marker='o')
     plt.grid()
     plt.show()
 
 
+@_guard_
 def validate_models(cv_set):
     best_power = 1
     best_lambda = 0
@@ -64,13 +78,15 @@ def validate_models(cv_set):
     return (best_power, best_lambda, best_mse)
 
 
+@_guard_
 def norm_data(x):
     x_max = max(x)
     x_min = min(x)
     return (x - x_min) / (x_max - x_min), x_max, x_min
 
 
-if __name__ == "__main__":
+@_guard_
+def main():
     """ Read data """
     try:
         data = pd.read_csv("day_07/resources/" + filename)
@@ -110,3 +126,6 @@ if __name__ == "__main__":
     with open("model.pickle", 'wb') as my_file:
         pickle.dump(results, my_file)
         print("All results saved =)")
+
+if __name__=="__main__":
+    main()
