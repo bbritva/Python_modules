@@ -24,28 +24,34 @@ def _guard_(func):
             return None
     return wrapper
 
-
-@_guard_
-def calc_params(y, y_hat):
-    tp = 0
-    fp = 0
-    tn = 0
-    fn = 0
-    for pos_label in range(4):
-        tp += len(y[(y == pos_label) & (y_hat == pos_label)])
-        fp += len(y[(y != pos_label) & (y_hat == pos_label)])
-        tn += len(y[(y != pos_label) & (y_hat != pos_label)])
-        fn += len(y[(y == pos_label) & (y_hat != pos_label)])
+def calc_params(y, y_hat, pos_label):
+    tp = len(y[(y == pos_label) & (y_hat == pos_label)])
+    fp = len(y[(y != pos_label) & (y_hat == pos_label)])
+    tn = len(y[(y != pos_label) & (y_hat != pos_label)])
+    fn = len(y[(y == pos_label) & (y_hat != pos_label)])
     return tp, fp, tn, fn
 
 
 @_guard_
-def f1_score_(y, y_hat):
+def precision_score_(y, y_hat, pos_label=1):
+    tp, fp, tn, fn = calc_params(y, y_hat, pos_label)
+    return tp / (tp + fp)
+
+
+@_guard_
+def recall_score_(y, y_hat, pos_label=1):
+    tp, fp, tn, fn = calc_params(y, y_hat, pos_label)
+    return tp / (tp + fn)
+
+
+@_guard_
+def f1_score_macro_(y, y_hat):
     """ Compute the f1 score """
-    tp, fp, tn, fn = calc_params(y, y_hat)
-    precision = tp / (tp + fp)
-    recall = tp / (tp + fn)
-    return (2 * precision * recall) / (precision + recall)
+    mac_avg_prec = sum(precision_score_(y, y_hat, i) for i in range(4)) / 4
+    mac_avg_recall = sum(recall_score_(y, y_hat, i) for i in range(4)) / 4
+    mac_avg_f1 = 2 * (mac_avg_prec * mac_avg_recall) / \
+        (mac_avg_prec + mac_avg_recall)
+    return mac_avg_f1
 
 
 @_guard_
@@ -79,7 +85,7 @@ def validate_models(X, Y):
             y_hat.append(mdl.predict_(X))
         y_hat = np.c_[y_hat[0], y_hat[1], y_hat[2], y_hat[3]]
         y_hat = np.argmax(y_hat, axis=1).reshape((-1, 1))
-        f1_score = f1_score_(Y, y_hat)
+        f1_score = f1_score_macro_(Y, y_hat)
         if f1_score > best_f1:
             best_f1 = f1_score
             best_lambda = j / 5

@@ -3,7 +3,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import pickle
 
-from polynomial_model import add_polynomial_features
 from my_logistic_regression import MyLogisticRegression as MyLR
 
 
@@ -33,28 +32,34 @@ def train_model(x_train, y_train, lambda_):
     return my_lreg.theta
 
 
-@_guard_
-def calc_params(y, y_hat):
-    tp = 0
-    fp = 0
-    tn = 0
-    fn = 0
-    for pos_label in range(1,5):
-        tp += len(y[(y == pos_label) & (y_hat == pos_label)])
-        fp += len(y[(y != pos_label) & (y_hat == pos_label)])
-        tn += len(y[(y != pos_label) & (y_hat != pos_label)])
-        fn += len(y[(y == pos_label) & (y_hat != pos_label)])
+def calc_params(y, y_hat, pos_label):
+    tp = len(y[(y == pos_label) & (y_hat == pos_label)])
+    fp = len(y[(y != pos_label) & (y_hat == pos_label)])
+    tn = len(y[(y != pos_label) & (y_hat != pos_label)])
+    fn = len(y[(y == pos_label) & (y_hat != pos_label)])
     return tp, fp, tn, fn
 
 
 @_guard_
-def f1_score_(y, y_hat):
+def precision_score_(y, y_hat, pos_label=1):
+    tp, fp, tn, fn = calc_params(y, y_hat, pos_label)
+    return tp / (tp + fp)
+
+
+@_guard_
+def recall_score_(y, y_hat, pos_label=1):
+    tp, fp, tn, fn = calc_params(y, y_hat, pos_label)
+    return tp / (tp + fn)
+
+
+@_guard_
+def f1_score_macro_(y, y_hat):
     """ Compute the f1 score """
-    tp, fp, tn, fn = calc_params(y, y_hat)
-    print(tp, fp, tn, fn)
-    precision = tp / (tp + fp)
-    recall = tp / (tp + fn)
-    return (2 * precision * recall) / (precision + recall)
+    mac_avg_prec = sum(precision_score_(y, y_hat, i) for i in range(4)) / 4
+    mac_avg_recall = sum(recall_score_(y, y_hat, i) for i in range(4)) / 4
+    mac_avg_f1 = 2 * (mac_avg_prec * mac_avg_recall) / \
+        (mac_avg_prec + mac_avg_recall)
+    return mac_avg_f1
 
 
 @_guard_
@@ -74,10 +79,10 @@ def get_scores(thetas, data):
     for j in range(6):
         theta = thetas[j/5]
         y_hat = get_predictions(theta, data)
-        res = y_hat == data[:,-1].reshape((-1,1))
+        res = y_hat == data[:, -1].reshape((-1, 1))
         print("Correct predictions =", res.sum())
         print("Wrong predictions =", res.shape[0] - res.sum())
-        f1_scores.append(f1_score_(data[:,-1].reshape(-1,1), y_hat))
+        f1_scores.append(f1_score_macro_(data[:, -1].reshape(-1, 1), y_hat))
     return f1_scores
 
 
@@ -90,7 +95,7 @@ def train_models(train_data, test_data, lambda_):
         thetas.append(train_model(X, Y[:, i].reshape((-1, 1)), lambda_))
     print("Models with lambda %f trained" % (lambda_))
     y_hat = get_predictions(thetas, test_data)
-    f1_score = f1_score_(test_data[:,-1].reshape(-1,1), y_hat)
+    f1_score = f1_score_macro_(test_data[:, -1].reshape(-1, 1), y_hat)
     print(lambda_, f1_score)
     return thetas
 
@@ -140,7 +145,6 @@ def main():
     plt.plot(lambdas, f1_scores)
     plt.grid()
     plt.show()
-
 
     y_hat = get_predictions(best_thetas, test_data)
     x_test = test_data[:, :-5]
