@@ -11,7 +11,7 @@ target_file = "solar_system_census_planets.csv"
 features = ["weight", "height", "bone_density"]
 results = {}
 models = {0.0: {}, 0.2: {}, 0.4: {}, 0.6: {}, 0.8: {}, 1.0: {}}
-max_iter = 5e3
+max_iter = 5e5
 alpha = .001
 
 
