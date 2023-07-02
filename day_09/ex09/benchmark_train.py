@@ -11,8 +11,8 @@ target_file = "solar_system_census_planets.csv"
 features = ["weight", "height", "bone_density"]
 results = {}
 models = {0.0: {}, 0.2: {}, 0.4: {}, 0.6: {}, 0.8: {}, 1.0: {}}
-max_iter = 1e4
-alpha = .1
+max_iter = 10e5
+alpha = .01
 
 
 def _guard_(func):
@@ -80,6 +80,9 @@ def validate_models(X, Y):
             y_hat.append(mdl.predict_(X))
         y_hat = np.c_[y_hat[0], y_hat[1], y_hat[2], y_hat[3]]
         y_hat = np.argmax(y_hat, axis=1).reshape((-1, 1))
+        # res = y_hat == Y
+        # print("Correct predictions =", res.sum())
+        # print("Wrong predictions =", res.shape[0] - res.sum())
         f1_score = f1_score_(Y, y_hat)
         print(j/5, f1_score)
         if f1_score > best_f1:
